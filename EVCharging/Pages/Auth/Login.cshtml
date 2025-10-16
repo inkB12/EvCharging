@@ -1,0 +1,12 @@
+﻿@page
+@model EVCharging.Pages.Auth.LoginModel
+@{
+}
+<h2>Login</h2>
+<form method="post">
+    <div asp-validation-summary="All"></div>
+    <div><label>Email</label><input asp-for="Input.Email" /></div>
+    <div><label>Password</label><input asp-for="Input.Password" type="password" /></div>
+    <button type="submit">Login</button>
+</form>
+<p class="text-danger">@Model.Error</p>
