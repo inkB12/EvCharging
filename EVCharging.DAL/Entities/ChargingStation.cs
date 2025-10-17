@@ -13,7 +13,7 @@ public partial class ChargingStation
 
     public string? Location { get; set; }
 
-    public string? Code { get; set; }
+    public string? Station { get; set; }
 
     public string Status { get; set; } = null!;
 

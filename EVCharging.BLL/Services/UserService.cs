@@ -23,7 +23,6 @@ namespace EVCharging.BLL.Services
                 Password = HashSHA256(req.Password),
                 FullName = req.FullName?.Trim(),
                 Role = "User",
-                Status = 1 // 1=active
             };
             await _repo.AddAsync(entity);
             await _repo.SaveChangesAsync();
@@ -35,7 +34,6 @@ namespace EVCharging.BLL.Services
         {
             var acc = await _repo.GetByEmailAsync(req.Email);
             if (acc == null) return (false, "Tài khoản không tồn tại.", null);
-            if (acc.Status == 0) return (false, "Tài khoản đã bị vô hiệu.", null);
 
             if (HashSHA256(req.Password) != acc.Password)
                 return (false, "Sai mật khẩu.", null);

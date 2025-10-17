@@ -19,13 +19,15 @@ public partial class User
 
     public string? Vehicle { get; set; }
 
-    public byte Status { get; set; }
+    public bool IsDeleted { get; set; }
 
     public int? ServicePlanId { get; set; }
 
     public int? HomeStationId { get; set; }
 
-    public virtual ICollection<ChargingSession> ChargingSessions { get; set; } = new List<ChargingSession>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+    public virtual ICollection<FaultReport> FaultReports { get; set; } = new List<FaultReport>();
 
     public virtual ChargingStation? HomeStation { get; set; }
 

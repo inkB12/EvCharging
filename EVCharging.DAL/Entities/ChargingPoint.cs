@@ -21,5 +21,7 @@ public partial class ChargingPoint
 
     public virtual ICollection<ChargingSession> ChargingSessions { get; set; } = new List<ChargingSession>();
 
+    public virtual ICollection<FaultReport> FaultReports { get; set; } = new List<FaultReport>();
+
     public virtual ChargingStation Station { get; set; } = null!;
 }

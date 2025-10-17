@@ -7,7 +7,7 @@ public partial class ChargingSession
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
+    public int BookingId { get; set; }
 
     public int PointId { get; set; }
 
@@ -19,9 +19,7 @@ public partial class ChargingSession
 
     public string Status { get; set; } = null!;
 
+    public virtual Booking Booking { get; set; } = null!;
+
     public virtual ChargingPoint Point { get; set; } = null!;
-
-    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
-
-    public virtual User User { get; set; } = null!;
 }

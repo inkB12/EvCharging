@@ -13,7 +13,7 @@ public partial class ServicePlan
 
     public decimal Price { get; set; }
 
-    public byte Status { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
