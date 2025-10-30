@@ -36,13 +36,16 @@ namespace EVCharging.BLL.Services
         {
             var p = await _repo.GetByIdAsync(id);
             if (p == null) return null;
+
             return new ServicePlanDto
             {
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                Price = p.Price
+                Price = p.Price,
+                IsDeleted = p.IsDeleted // ✅ Thêm dòng này
             };
+
         }
 
         public async Task<int> CreateAsync(ServicePlanDto dto)

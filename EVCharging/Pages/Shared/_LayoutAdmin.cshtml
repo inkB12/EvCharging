@@ -1,0 +1,117 @@
+﻿@* ==============================
+   Layout: Admin Dashboard (EV Charging System)
+   Language: Vietnamese
+   ============================== *@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bảng điều khiển quản trị</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #8b5cf6, #ec4899);
+        }
+
+            .sidebar .nav-link:hover,
+            .sidebar .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
+            }
+
+        .main-content {
+            overflow-x: hidden;
+        }
+
+        header input:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="admin-wrapper d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-dark text-white flex-shrink-0 p-3">
+            <div class="d-flex align-items-center mb-4">
+                <i class="fa-solid fa-bolt-lightning fs-3 text-warning me-2"></i>
+                <span class="fw-bold fs-5">EV Charging Admin</span>
+            </div>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a asp-page="/Admin/Dashboard" class="nav-link text-white">
+                        <i class="fa-solid fa-chart-line me-2"></i>Bảng điều khiển
+                    </a>
+                </li>
+                <li>
+                    <a asp-page="/Admin/Users/Index" class="nav-link text-white">
+                        <i class="fa-solid fa-user-group me-2"></i>Người dùng
+                    </a>
+                </li>
+                <li>
+                    <a asp-page="/Admin/Stations/Index" class="nav-link text-white">
+                        <i class="fa-solid fa-charging-station me-2"></i>Trạm sạc
+                    </a>
+                </li>
+                <li>
+                    <a asp-page="/Admin/Points/Index" class="nav-link text-white">
+                        <i class="fa-solid fa-plug-circle-bolt me-2"></i>Điểm sạc
+                    </a>
+                </li>
+                <li>
+                    <a asp-page="/Admin/ServicePlans/Index" class="nav-link text-white">
+                        <i class="fa-solid fa-tags me-2"></i>Gói dịch vụ
+                    </a>
+                </li>
+                <li>
+                    <a asp-page="/Admin/Reports/Index" class="nav-link text-white">
+                        <i class="fa-solid fa-chart-pie me-2"></i>Báo cáo
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content flex-grow-1 bg-light">
+            <!-- Header -->
+            <!-- Header -->
+            <header class="d-flex justify-content-end align-items-center p-3 bg-white border-bottom shadow-sm">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
+                        <img src="https://i.pravatar.cc/40" alt="Admin" class="rounded-circle me-2" />
+                        <strong>Admin</strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item" href="#">Hồ sơ cá nhân</a></li>
+                        <li><a class="dropdown-item" href="#">Cài đặt</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item text-danger" href="#">Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <section class="p-4">
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin.js"></script>
+     @RenderSection("Scripts", required: false)
+</body>
+</html>

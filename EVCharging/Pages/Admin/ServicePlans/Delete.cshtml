@@ -1,0 +1,23 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.ServicePlans.DeleteModel
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Xóa gói dịch vụ";
+}
+
+
+
+<h2 class="fw-bold text-danger mb-4"><i class="fa-solid fa-trash me-2"></i>Xóa Gói Dịch Vụ</h2>
+
+<div class="alert alert-warning">
+    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+    Bạn có chắc chắn muốn xóa gói <strong>@Model.ServicePlan?.Name</strong> không?
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="ServicePlan.Id" />
+    <div class="d-flex justify-content-end">
+        <a asp-page="Index" class="btn btn-outline-secondary me-2">Hủy</a>
+        <button type="submit" class="btn btn-danger px-4">Xóa</button>
+    </div>
+</form>

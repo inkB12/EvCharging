@@ -20,12 +20,13 @@ namespace EVCharging.DAL.Services
 
         public async Task<List<ServicePlan>> GetAllAsync()
         {
-            return await _context.ServicePlans.Where(s => !s.IsDeleted).ToListAsync();
+            return await _context.ServicePlans.ToListAsync();
         }
 
         public async Task<ServicePlan?> GetByIdAsync(int id)
         {
-            return await _context.ServicePlans.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+            // Bỏ điều kiện !s.IsDeleted để cho phép xem cả gói đã dừng hoạt động
+            return await _context.ServicePlans.FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<int> CreateAsync(ServicePlan entity)
