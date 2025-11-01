@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EVCharging.BLL.DTO
+﻿namespace EVCharging.BLL.DTO
 {
     public class AdminUserDto
     {

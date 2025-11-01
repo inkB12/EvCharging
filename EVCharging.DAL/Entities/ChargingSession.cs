@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EVCharging.DAL.Entities;
+﻿namespace EVCharging.DAL.Entities;
 
 public partial class ChargingSession
 {

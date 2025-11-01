@@ -1,14 +1,12 @@
 ﻿using EVCharging.BLL.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVCharging.BLL.Interfaces
 {
     public interface IReportService
     {
         Task<ReportDto> GetSystemReportAsync(DateTime? start = null, DateTime? end = null);
+        Task<YearlyCostOverviewDTO> GetMonthlyCostReportByYear(int userId, int year);
+        Task<List<ChargingLocationHabitDTO>> GetChargingLocationHabits(int userId, int year);
+        Task<List<ChargingTimeHabitDTO>> GetChargingTimeHabits(int userId, int year);
     }
 }

@@ -1,3 +1,4 @@
+﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
 using EVCharging.BLL.Services;
 using EVCharging.DAL;
@@ -17,7 +18,7 @@ namespace EVCharging
             builder.Services.AddDbContext<EvchargingContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //Ti�m DI
+            //Tiêm DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
@@ -27,9 +28,19 @@ namespace EVCharging
             builder.Services.AddScoped<IReportRepository, ReportRepository>();
             builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
             builder.Services.AddScoped<IChargingPointService, ChargingPointService>();
-            builder.Services.AddScoped<IAdminUserService, AdminUserService>();  
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
             builder.Services.AddScoped<IServicePlanService, ServicePlanService>();
             builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<IPricingService, PricingService>();
+            builder.Services.AddScoped<IChargingPointRepository, ChargingPointRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+            // Kết nối Momo 
+            builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
+
+            // Lấy thông tin VNPAY
+            builder.Services.Configure<VNPayDTO>(builder.Configuration.GetSection("VnPaySettings"));
 
             // Session
             builder.Services.AddDistributedMemoryCache();
