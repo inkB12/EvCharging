@@ -1,0 +1,59 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.ServicePlans.DetailModel
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Chi tiết gói dịch vụ";
+}
+
+
+<h2 class="fw-bold text-secondary mb-4">
+    <i class="fa-solid fa-circle-info me-2"></i>Chi tiết Gói Dịch Vụ
+</h2>
+
+<div class="card shadow-sm p-4 bg-white rounded">
+    @if (Model.ServicePlan == null)
+    {
+        <div class="alert alert-danger">Không tìm thấy gói dịch vụ.</div>
+    }
+    else
+    {
+        <dl class="row mb-0">
+            <dt class="col-sm-3 text-secondary fw-semibold">Tên gói</dt>
+            <dd class="col-sm-9">@Model.ServicePlan.Name</dd>
+
+            <dt class="col-sm-3 text-secondary fw-semibold">Mô tả</dt>
+            <dd class="col-sm-9">@Model.ServicePlan.Description</dd>
+
+            <dt class="col-sm-3 text-secondary fw-semibold">Giá (₫)</dt>
+            <dd class="col-sm-9">@Model.ServicePlan.Price.ToString("N0")</dd>
+
+            <dt class="col-sm-3 text-secondary fw-semibold">Trạng thái</dt>
+            <dd class="col-sm-9">
+                @if (!Model.ServicePlan.IsDeleted)
+                {
+                    <span class="badge bg-success">Đang hoạt động</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Đã dừng hoạt động</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a asp-page="Edit" asp-route-id="@Model.ServicePlan.Id" class="btn btn-outline-primary me-2">
+                <i class="fa-solid fa-pen-to-square me-1"></i>Chỉnh sửa
+            </a>
+            <a asp-page="Index" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i>Quay lại danh sách
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .badge {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+    }
+</style>

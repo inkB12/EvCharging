@@ -1,0 +1,67 @@
+﻿@page
+@model EVCharging.Pages.Admin.DashboardModel
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";  // 👉 chỉ định layout kế thừa
+    ViewData["Title"] = "Bảng điều khiển";
+}
+
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Doanh thu</h5>
+                <h3>@Model.TotalRevenue.ToString("N0") ₫</h3>
+                <small>Kỳ này</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Người dùng</h5>
+                <h3>@Model.UserCount</h3>
+                <small>Tổng số người dùng</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Trạm sạc</h5>
+                <h3>@Model.StationCount</h3>
+                <small>Đang hoạt động</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Điểm sạc</h5>
+                <h3>@Model.PointCount</h3>
+                <small>Tổng số điểm</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm p-3">
+    <h5 class="mb-3 fw-bold text-secondary">Thống kê sử dụng trạm sạc</h5>
+    <canvas id="chartUsage"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('chartUsage');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UsageByStation.Keys)),
+            datasets: [{
+                label: 'Số phiên sạc',
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UsageByStation.Values)),
+                backgroundColor: '#ec4899'
+            }]
+        },
+    });
+</script>

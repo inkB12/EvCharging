@@ -20,6 +20,16 @@ namespace EVCharging
             //Tiêm DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
+            builder.Services.AddScoped<IChargingPointRepository, ChargingPointRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IServicePlanRepository, ServicePlanRepository>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
+            builder.Services.AddScoped<IChargingPointService, ChargingPointService>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();  
+            builder.Services.AddScoped<IServicePlanService, ServicePlanService>();
+            builder.Services.AddScoped<IReportService, ReportService>();
 
             // Session
             builder.Services.AddDistributedMemoryCache();

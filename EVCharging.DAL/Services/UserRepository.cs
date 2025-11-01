@@ -18,5 +18,48 @@ namespace EVCharging.DAL.Services
         public async Task AddAsync(User user) => await _db.Users.AddAsync(user);
 
         public Task SaveChangesAsync() => _db.SaveChangesAsync();
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _db.Users
+                 .Where(u => !u.IsDeleted)
+                 .ToListAsync();
+        }
+
+        public async Task<int> CreateAsync(User entity)
+        {
+            _db.Users.Add(entity);
+            await _db.SaveChangesAsync();
+            return entity.Id;
+        }
+
+        public async Task UpdateAsync(User entity)
+        {
+            _db.Users.Update(entity);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user != null)
+            {
+                user.IsDeleted = true;
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<User>> GetUsersByRoleAsync(string role)
+        {
+            return await _db.Users
+                .Where(u => u.Role == role && !u.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<int> CountUsersByRoleAsync(string role)
+        {
+            return await _db.Users
+                 .CountAsync(u => u.Role == role && !u.IsDeleted);
+        }
     }
 }
