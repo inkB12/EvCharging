@@ -1,4 +1,4 @@
-using EVCharging.BLL.DTO;
+﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
 using EVCharging.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -6,18 +6,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EVCharging.Pages.Driver
 {
-    public class MonthlyCostReportModel(IReportService reportService) : PageModel
+    public class ChargingHabitsReportModel(IReportService reportService) : PageModel
     {
         private readonly IReportService _reportService = reportService;
 
-        #region Request
         [BindProperty(SupportsGet = true)]
         public int SelectedYear { get; set; } = DateTime.Now.Year;
-        #endregion
+        public int TotalSessionsYear { get; set; }
 
-        #region Show
-        public YearlyCostOverviewDTO ReportData { get; set; } = default!;
-        #endregion
+        public List<ChargingLocationHabitDTO> LocationHabits { get; set; } = [];
+        public List<ChargingTimeHabitDTO> TimeHabits { get; set; } = [];
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -27,7 +25,10 @@ namespace EVCharging.Pages.Driver
                 return RedirectToPage("/Auth/Login");
             }
 
-            ReportData = await _reportService.GetMonthlyCostReportByYear(userId, SelectedYear);
+            LocationHabits = await _reportService.GetChargingLocationHabits(userId, SelectedYear);
+            TimeHabits = await _reportService.GetChargingTimeHabits(userId, SelectedYear);
+            TotalSessionsYear = LocationHabits.Sum(h => h.SessionCount);
+
             return Page();
         }
     }
