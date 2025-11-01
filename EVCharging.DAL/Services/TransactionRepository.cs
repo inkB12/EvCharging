@@ -34,5 +34,13 @@ namespace EVCharging.DAL.Services
             await _context.SaveChangesAsync();
             return entity.Entity;
         }
+
+        public async Task<List<Transaction>> GetByUserAndYearAsync(int userId, int year)
+        {
+            return await _context.Transactions
+                .Where(t => t.Booking.User.Id == userId && t.Datetime.Year == year && t.Status.Equals("SUCCESS"))
+                .Include(t => t.Booking).ThenInclude(b => b.ChargingSessions)
+                .ToListAsync();
+        }
     }
 }

@@ -1,0 +1,105 @@
+﻿@page
+@model EVCharging.Pages.Driver.MonthlyCostReportModel
+@{
+    ViewData["Title"] = "MonthlyCostReport";
+}
+
+<h2>Báo Cáo Chi Phí Sạc Hằng Tháng</h2>
+<hr />
+
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <label asp-for="SelectedYear" class="form-label">Chọn Năm:</label>
+            <select asp-for="SelectedYear" class="form-select">
+                @{
+                    int currentYear = DateTime.Now.Year;
+                    for (int y = currentYear; y >= currentYear - 5; y--)
+                    {
+                        <option value="@y">@y</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Xem Báo Cáo</button>
+        </div>
+    </div>
+</form>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Tổng Chi Phí Năm @Model.SelectedYear</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="monthlyCostChart" style="height: 400px;"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+@section Scripts {
+    <script>
+        // 1. Chuyển đổi dữ liệu C# sang JSON/JavaScript object
+        var reportData = @Html.Raw(Json.Serialize(Model.MonthlyReportData));
+
+        // 2. Chuẩn bị Labels (Tháng) và Data (Chi phí) cho biểu đồ
+        var monthlyLabels = [];
+        var monthlyCosts = [];
+
+        // Tạo một mảng 12 phần tử, điền 0 cho các tháng không có dữ liệu
+        var allMonths = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
+        var dataByMonth = {};
+
+        // Map dữ liệu có sẵn vào object theo tháng
+        reportData.forEach(item => {
+            // Tách lấy tháng (ví dụ: "10/2025" -> "10")
+            var month = item.monthYear.split('/')[0];
+            dataByMonth[month] = item.totalCost;
+        });
+
+        // Điền dữ liệu vào mảng cho biểu đồ
+        allMonths.forEach(month => {
+            monthlyLabels.push(month);
+            // Lấy dữ liệu chi phí, nếu không có thì mặc định là 0
+            monthlyCosts.push(dataByMonth[month] || 0);
+        });
+
+
+        // 3. Vẽ Biểu đồ bằng Chart.js
+        const ctx = document.getElementById('monthlyCostChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthlyLabels, // Label trục X: 1, 2, 3, ... 12
+                datasets: [{
+                    label: 'Tổng Chi Phí (VNĐ)',
+                    data: monthlyCosts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Cho phép tùy chỉnh height
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Chi Phí (VNĐ)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tháng'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
