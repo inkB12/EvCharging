@@ -1,0 +1,391 @@
+﻿@page
+@model EVCharging.Pages.Charge.ChargingModel
+@{
+}
+
+<style>
+    :root {
+        --bg: #0b1020;
+        --card: #11172b;
+        --track: #1f2a44;
+        --accent: #18e07f;
+        --accent2: #39c2ff;
+        --text: #eaf2ff;
+        --muted: #9bb0d0;
+    }
+
+    body {
+        background: var(--bg);
+    }
+
+    .wrap {
+        max-width: 900px;
+        margin: 32px auto;
+        padding: 20px;
+        color: var(--text);
+    }
+
+    .panel {
+        background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card);
+        border: 1px solid #263453;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: .3px;
+        margin-bottom: 16px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 28px;
+        align-items: center;
+    }
+
+    .controls {
+        display: grid;
+        gap: 14px;
+    }
+
+    .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+        .row label {
+            width: 180px;
+            color: var(--muted);
+        }
+
+        .row input[type="number"] {
+            width: 110px;
+            background: #0e152a;
+            border: 1px solid #27365a;
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+            .row input[type="number"]::-webkit-outer-spin-button,
+            .row input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+    .btnbar {
+        display: flex;
+        gap: 12px;
+        margin-top: 6px;
+    }
+
+    .btn {
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 16px;
+        color: #05121b;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #6bffa9);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ff5577, #ff9970);
+    }
+
+    .btn-ghost {
+        background: #0f162b;
+        color: var(--text);
+        border: 1px solid #28385f;
+    }
+
+    /* Circle */
+    .circle-wrap {
+        width: 300px;
+        height: 300px;
+        margin: 0 auto;
+        position: relative;
+        display: grid;
+        place-items: center;
+    }
+
+    .ring {
+        filter: drop-shadow(0 0 12px rgba(24,224,127,.35)) drop-shadow(0 0 30px rgba(57,194,255,.14));
+    }
+
+    .center-info {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+    }
+
+    .percent {
+        font-size: 40px;
+        font-weight: 800;
+        text-shadow: 0 0 18px rgba(24,224,127,.45);
+    }
+
+    .mini {
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: .3px;
+        margin-top: 6px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .stat {
+        background: #0e152a;
+        border: 1px solid #223259;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+    }
+
+        .stat .label {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .stat .val {
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+    /* progress bar under inputs */
+    .bar {
+        height: 10px;
+        background: #0e152a;
+        border: 1px solid #27365a;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+        .bar > i {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            box-shadow: 0 0 10px rgba(24,224,127,.6), 0 0 20px rgba(57,194,255,.25) inset;
+            transition: width .25s ease;
+        }
+</style>
+
+<div class="wrap">
+    <div class="panel">
+        <div class="title">EV Charging – Vòng tròn đếm thời gian</div>
+        <div class="grid">
+            <!-- Circular meter -->
+            <div>
+                <div class="circle-wrap">
+                    <svg class="ring" width="300" height="300" viewBox="0 0 300 300">
+                        <!-- outer glow ring -->
+                        <defs>
+                            <linearGradient id="g1" x1="0" x2="1">
+                                <stop offset="0%" stop-color="#18e07f" />
+                                <stop offset="100%" stop-color="#39c2ff" />
+                            </linearGradient>
+                        </defs>
+                        <!-- track -->
+                        <circle cx="150" cy="150" r="120" stroke="var(--track)" stroke-width="22" fill="none" />
+                        <!-- progress -->
+                        <circle id="arc" cx="150" cy="150" r="120"
+                                stroke="url(#g1)" stroke-width="22" fill="none"
+                                stroke-linecap="round"
+                                stroke-dasharray="753.98"
+                                stroke-dashoffset="753.98"
+                                transform="rotate(-90 150 150)" />
+                        <!-- inner ring for cosmetic -->
+                        <circle cx="150" cy="150" r="92" stroke="#0f162b" stroke-width="8" fill="#0b1124" />
+                    </svg>
+                    <div class="center-info">
+                        <div class="percent" id="percent">0%</div>
+                        <div class="mini" id="timeText">00:00:00 / 00:00:00</div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="label">ĐÃ TRÔI</div>
+                        <div class="val" id="elapsedVal">00:00:00</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">CÒN LẠI</div>
+                        <div class="val" id="remainVal">00:00:00</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">MỤC TIÊU</div>
+                        <div class="val" id="targetVal">00:00:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="row">
+                    <label>Tổng thời gian sạc</label>
+                    <div class="row" style="gap:8px;">
+                        <input type="number" id="hours" min="0" max="23" placeholder="Giờ" value="0" />
+                        <input type="number" id="minutes" min="0" max="59" placeholder="Phút" value="10" />
+                        <input type="number" id="seconds" min="0" max="59" placeholder="Giây" value="0" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label>Tốc độ hiển thị</label>
+                    <input type="number" id="tickMs" min="10" value="200" />
+                    <span class="mini">ms / cập nhật (mượt hơn thì giảm)</span>
+                </div>
+
+                <div class="bar"><i id="barFill"></i></div>
+
+                <div class="btnbar">
+                    <button id="btnToggle" class="btn btn-primary">Start</button>
+                    <button id="btnReset" class="btn btn-ghost">Reset</button>
+                </div>
+
+                <div class="mini">Mẹo: nhập tổng thời gian trước, bấm <b>Start</b> để chạy; bấm lại để <b>Stop</b>. Khi đạt 100% sẽ tự dừng.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ===== Elements
+        const arc = document.getElementById('arc');
+        const percentEl = document.getElementById('percent');
+        const timeText = document.getElementById('timeText');
+        const elapsedVal = document.getElementById('elapsedVal');
+        const remainVal  = document.getElementById('remainVal');
+        const targetVal  = document.getElementById('targetVal');
+        const barFill    = document.getElementById('barFill');
+
+        const hoursEl   = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const tickMsEl  = document.getElementById('tickMs');
+
+        const btnToggle = document.getElementById('btnToggle');
+        const btnReset  = document.getElementById('btnReset');
+
+        // ===== Timer state
+        let totalMs = 0;
+        let running = false;
+        let startTime = 0;
+        let elapsedAccum = 0;
+        let intervalId = null;
+
+        const CIRCUM = 2 * Math.PI * 120; // 753.98...
+
+        function hmsToMs(h, m, s){
+          h = +h||0; m = +m||0; s = +s||0;
+          return (h*3600 + m*60 + s) * 1000;
+        }
+        function fmt(ms){
+          ms = Math.max(0, Math.floor(ms));
+          const totalSec = Math.floor(ms/1000);
+          const h = Math.floor(totalSec/3600);
+          const m = Math.floor((totalSec%3600)/60);
+          const s = totalSec%60;
+          return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+        function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+
+        function readTotal(){
+          totalMs = hmsToMs(hoursEl.value, minutesEl.value, secondsEl.value);
+          if (totalMs <= 0) totalMs = 0;
+          targetVal.textContent = fmt(totalMs);
+          timeText.textContent = `${fmt(elapsedAccum)} / ${fmt(totalMs)}`;
+        }
+
+        function render(){
+          // elapsed
+          const now = Date.now();
+          const current = running ? (now - startTime) : 0;
+          let elapsed = elapsedAccum + current;
+          if (totalMs > 0) elapsed = Math.min(elapsed, totalMs);
+
+          // progress
+          const p = (totalMs > 0) ? clamp01(elapsed / totalMs) : 0;
+          const dashOffset = CIRCUM * (1 - p);
+
+          arc.style.strokeDasharray = CIRCUM.toFixed(2);
+          arc.style.strokeDashoffset = dashOffset.toFixed(2);
+          percentEl.textContent = Math.round(p*100) + '%';
+          timeText.textContent = `${fmt(elapsed)} / ${fmt(totalMs)}`;
+
+          elapsedVal.textContent = fmt(elapsed);
+          remainVal.textContent  = fmt(Math.max(0, totalMs - elapsed));
+          barFill.style.width = (p*100).toFixed(1) + '%';
+
+          // auto-stop at 100%
+          if (running && totalMs > 0 && elapsed >= totalMs - 5) {
+            stopTimer();
+          }
+        }
+
+        function startTimer(){
+          if (running) return;
+          readTotal();
+          if (totalMs <= 0){
+            alert('Vui lòng nhập tổng thời gian sạc > 0');
+            return;
+          }
+          running = true;
+          startTime = Date.now();
+          btnToggle.textContent = 'Stop';
+          btnToggle.classList.remove('btn-primary');
+          btnToggle.classList.add('btn-danger');
+          const tick = Math.max(20, (+tickMsEl.value||200));
+          intervalId = setInterval(render, tick);
+          render();
+        }
+        function stopTimer(){
+          if (!running) return;
+          running = false;
+          clearInterval(intervalId);
+          intervalId = null;
+          elapsedAccum += (Date.now() - startTime);
+          if (totalMs > 0) elapsedAccum = Math.min(elapsedAccum, totalMs);
+          startTime = 0;
+          btnToggle.textContent = 'Start';
+          btnToggle.classList.remove('btn-danger');
+          btnToggle.classList.add('btn-primary');
+          render();
+        }
+        function resetTimer(){
+          stopTimer();
+          elapsedAccum = 0;
+          render();
+        }
+
+        // Events
+        btnToggle.addEventListener('click', () => running ? stopTimer() : startTimer());
+        btnReset.addEventListener('click', resetTimer);
+        [hoursEl, minutesEl, secondsEl].forEach(el => el.addEventListener('change', () => {
+          readTotal(); render();
+        }));
+
+        // init
+        readTotal(); render();
+    </script>
+}

@@ -21,20 +21,35 @@ namespace EVCharging
             //Tiêm DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+
             builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
+
             builder.Services.AddScoped<IChargingPointRepository, ChargingPointRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
             builder.Services.AddScoped<IServicePlanRepository, ServicePlanRepository>();
+
             builder.Services.AddScoped<IReportRepository, ReportRepository>();
+
             builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
+
             builder.Services.AddScoped<IChargingPointService, ChargingPointService>();
+
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+
             builder.Services.AddScoped<IServicePlanService, ServicePlanService>();
+
             builder.Services.AddScoped<IReportService, ReportService>();
+
             builder.Services.AddScoped<IPricingService, PricingService>();
+
             builder.Services.AddScoped<IChargingPointRepository, ChargingPointRepository>();
+
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+
             builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+            builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
