@@ -33,6 +33,8 @@ CREATE TABLE dbo.ChargingStation
     [Name]        NVARCHAR(150) NOT NULL,
     [Description] NVARCHAR(500) NULL,
     [Location]    NVARCHAR(300) NULL,
+	[Longtitude]  DECIMAL(18,2) NOT NULL,
+	[Latitude]    DECIMAL(18,2) NOT NULL,
     [Station]     NVARCHAR(50)  NULL,  -- mã/slug trạm (theo ERD: "station")
     [Status]      NVARCHAR(20)  NOT NULL CONSTRAINT DF_Station_Status DEFAULT(N'empty'),
     CONSTRAINT CK_Station_Status CHECK ([Status] IN (N'empty', N'inuse'))

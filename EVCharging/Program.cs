@@ -48,6 +48,7 @@ namespace EVCharging
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 
             builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 

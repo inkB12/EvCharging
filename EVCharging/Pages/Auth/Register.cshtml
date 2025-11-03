@@ -1,14 +1,69 @@
 ﻿@page
 @model EVCharging.Pages.Auth.RegisterModel
 @{
+    ViewData["Title"] = "Register";
 }
 
-<h2>Register</h2>
-<form method="post">
-    <div asp-validation-summary="All"></div>
-    <div><label>Full name</label><input asp-for="Input.FullName" /></div>
-    <div><label>Email</label><input asp-for="Input.Email" /></div>
-    <div><label>Password</label><input asp-for="Input.Password" type="password" /></div>
-    <button type="submit">Create account</button>
-</form>
-<p class="text-success">@Model.Info</p>
+<div class="row justify-content-center mt-5">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <h2 class="mb-3 text-center">Tạo tài khoản</h2>
+                @if (!string.IsNullOrEmpty(Model.Info))
+                {
+                    <div class="alert alert-success" role="alert">@Model.Info</div>
+                }
+
+                <form method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên</label>
+                        <input asp-for="Input.FullName" class="form-control" placeholder="VD: Nguyễn Văn A" />
+                        <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input asp-for="Input.Phone" class="form-control" placeholder="09xxxxxxxx" />
+                        <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <input asp-for="Input.Password" type="password" class="form-control" placeholder="Tối thiểu 6 ký tự" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePwd(this)">👁</button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 rounded-3">
+                        Tạo tài khoản
+                    </button>
+
+                    <div class="text-center mt-3">
+                        Đã có tài khoản?
+                        <a asp-page="/Auth/Login">Đăng nhập</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePwd(btn) {
+            const input = btn.closest('.input-group').querySelector('input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+}
