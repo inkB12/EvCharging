@@ -1,0 +1,68 @@
+﻿@page
+@model EVCharging.Pages.Staff.Reports.CreateModel
+@{
+    ViewData["Title"] = "Tạo Báo cáo Sự cố";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Report.Title" class="form-label fw-bold">Tiêu đề</label>
+                            <input asp-for="Report.Title" class="form-control form-control-lg" />
+                            <span asp-validation-for="Report.Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Report.PointId" class="form-label fw-bold">Điểm sạc</label>
+                                <select asp-for="Report.PointId" class="form-select"
+                                        asp-items="Model.ChargingPointList">
+                                    <option value="">-- Chọn điểm sạc --</option>
+                                </select>
+                                <span asp-validation-for="Report.PointId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Report.Severity" class="form-label fw-bold">Mức độ nghiêm trọng</label>
+                                <select asp-for="Report.Severity" class="form-select">
+                                    <option value="1">1 - Thấp</option>
+                                    <option value="2">2 - Trung bình</option>
+                                    <option value="3">3 - Cao</option>
+                                    <option value="4">4 - Rất cao</option>
+                                    <option value="5">5 - Khẩn cấp</option>
+                                </select>
+                                <span asp-validation-for="Report.Severity" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Report.Description" class="form-label fw-bold">Mô tả chi tiết (nếu có)</label>
+                            <textarea asp-for="Report.Description" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-1"></i> Lưu Báo cáo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

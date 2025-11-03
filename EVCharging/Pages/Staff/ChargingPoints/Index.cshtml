@@ -1,0 +1,64 @@
+﻿@page
+@model EVCharging.Pages.Staff.ChargingPoints.IndexModel
+@{
+    ViewData["Title"] = "Quản lý Điểm sạc";
+}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0">
+            <i class="fas fa-charging-station me-2"></i>
+            Trạm sạc: @Model.StationName
+        </h4>
+    </div>
+    <div class="card-body">
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-warning">@TempData["Message"]</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID Điểm sạc</th>
+                        <th>Loại cổng (Port)</th>
+                        <th>Tốc độ (kW)</th>
+                        <th>Giá (VND/kW)</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ChargingPoints)
+                    {
+                        <tr>
+                            <td><strong>@item.Id</strong></td>
+                            <td>@item.PortType</td>
+                            <td>@item.ChargingSpeedKw</td>
+                            <td>@item.Price.ToString("N0")</td>
+                            <td>
+                                @if (item.Status == "Available")
+                                {
+                                    <span class="badge bg-success">Sẵn sàng</span>
+                                }
+                                else if (item.Status == "Charging")
+                                {
+                                    <span class="badge bg-primary">Đang sạc</span>
+                                }
+                                else if (item.Status == "Faulty")
+                                {
+                                    <span class="badge bg-danger">Bị lỗi</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

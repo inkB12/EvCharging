@@ -35,7 +35,9 @@ namespace EVCharging
             builder.Services.AddScoped<IChargingPointRepository, ChargingPointRepository>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
-
+            builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
+            builder.Services.AddScoped<IFaultReportRepository, FaultReportRepository>();
+            builder.Services.AddScoped<IFaultReportService, FaultReportService>();
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
 
