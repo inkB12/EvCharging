@@ -1,6 +1,4 @@
-﻿
-
-namespace EVCharging.DAL.Entities;
+﻿namespace EVCharging.DAL.Entities;
 
 public partial class User
 {
