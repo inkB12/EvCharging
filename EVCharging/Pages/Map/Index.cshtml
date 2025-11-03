@@ -1,0 +1,232 @@
+﻿@page
+@model EVCharging.Pages.Map.IndexModel
+@{
+    Layout = null; // hoặc dùng layout của bạn, bỏ dòng này đi
+    ViewData["Title"] = "EV Stations Map";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 16px;
+        }
+
+        h2 {
+            margin: 0 0 12px;
+        }
+
+        .wrap {
+            display: grid;
+            gap: 12px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+            .toolbar input[type="text"] {
+                padding: 8px 10px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                min-width: 240px;
+            }
+
+            .toolbar .btn {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+
+                .toolbar .btn:hover {
+                    background: #f2f2f2;
+                }
+
+        #map {
+            height: 560px;
+            border-radius: 14px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.08);
+        }
+
+        .legend {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #eef8ee;
+            border: 1px solid #dfeede;
+        }
+        /* EV marker (DivIcon) */
+        .ev-marker {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #b6ffb6, #39c65a 60%, #2aa84a);
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.15), 0 8px 14px rgba(0,0,0,.2);
+            display: grid;
+            place-items: center;
+            transform: translate(-50%,-50%);
+            position: relative;
+        }
+
+            .ev-marker span {
+                font-size: 16px;
+                line-height: 1;
+                color: #fff;
+                text-shadow: 0 1px 2px rgba(0,0,0,.35);
+            }
+        /* Popup content */
+        .popup h4 {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .popup .muted {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .popup code {
+            background: #f5f5f5;
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h2>EV Stations Map</h2>
+
+        <div class="toolbar">
+            <input id="q" type="text" placeholder="Tìm trạm theo tên/địa chỉ..." />
+            <button id="fitAllBtn" class="btn">Fit all</button>
+            <span class="legend">
+                <span class="chip"><span>⚡</span> EV Station</span>
+            </span>
+            <span style="margin-left:auto;color:#888;font-size:13px">
+                Test center nhanh: <code>?lat=21.0285&amp;lng=105.8542</code>
+            </span>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+    <script>
+        // ====== DATA TRẠM (hard-code trong index) ======
+        const stations = [
+            { id: 1, name: "EV Station Keangnam", lat: 21.0170, lng: 105.7830, address: "Phạm Hùng, Nam Từ Liêm, Hà Nội" },
+            { id: 2, name: "EV Station Hồ Gươm",  lat: 21.0285, lng: 105.8542, address: "Hoàn Kiếm, Hà Nội" },
+            { id: 3, name: "EV Station Bến Thành",lat: 10.7726, lng: 106.6984, address: "Quận 1, TP.HCM" },
+            { id: 4, name: "EV Station Thủ Đức",  lat: 10.8480, lng: 106.7714, address: "Thành phố Thủ Đức, TP.HCM" },
+            { id: 5, name: "EV Station Đà Nẵng", lat: 16.0471, lng: 108.2068, address: "Hải Châu, Đà Nẵng" },
+        ];
+
+        // Đọc query ?lat=&lng= để center (nếu có)
+        const url = new URL(window.location.href);
+        const qLat = parseFloat(url.searchParams.get("lat"));
+        const qLng = parseFloat(url.searchParams.get("lng"));
+        const defaultCenter = [stations[0].lat, stations[0].lng];
+        const center = (!Number.isNaN(qLat) && !Number.isNaN(qLng)) ? [qLat, qLng] : defaultCenter;
+
+        // ====== MAP ======
+        const map = L.map('map', { zoomControl: true }).setView(center, 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // EV DivIcon
+        const evIcon = L.divIcon({
+            className: '', // reset
+            html: '<div class="ev-marker"><span>⚡</span></div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14], // trung tâm
+            popupAnchor: [0, -14]
+        });
+
+        // Tạo layer group để dễ filter/fit bounds
+        const layerGroup = L.layerGroup().addTo(map);
+
+        function renderMarkers(list) {
+            layerGroup.clearLayers();
+            list.forEach(s => {
+                const m = L.marker([s.lat, s.lng], { icon: evIcon });
+                const html = `
+                    <div class="popup">
+                        <h4>${escapeHtml(s.name)}</h4>
+                        <div class="muted">${escapeHtml(s.address)}</div>
+                        <div class="muted">Lat/Lng: <code>${s.lat.toFixed(6)}, ${s.lng.toFixed(6)}</code></div>
+                    </div>
+                `;
+                m.bindPopup(html);
+                m.addTo(layerGroup);
+            });
+        }
+
+        // Render lần đầu
+        renderMarkers(stations);
+
+        // Fit all
+        function fitAll(list) {
+            if (!list.length) return;
+            const b = L.latLngBounds(list.map(s => [s.lat, s.lng]));
+            map.fitBounds(b, { padding: [30, 30] });
+        }
+        document.getElementById('fitAllBtn').addEventListener('click', () => fitAll(currentList()));
+        // Auto fit nếu không có query lat/lng (nghĩa là không cố center)
+        if (Number.isNaN(qLat) || Number.isNaN(qLng)) fitAll(stations);
+
+        // Search/filter
+        const qInput = document.getElementById('q');
+        qInput.addEventListener('input', () => {
+            const q = qInput.value.trim().toLowerCase();
+            const filtered = !q ? stations : stations.filter(s =>
+                s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q)
+            );
+            renderMarkers(filtered);
+        });
+
+        function currentList() {
+            const q = qInput.value.trim().toLowerCase();
+            return !q ? stations : stations.filter(s =>
+                s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q)
+            );
+        }
+
+        // Helper: escape HTML trong popup
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+    </script>
+</body>
+</html>
