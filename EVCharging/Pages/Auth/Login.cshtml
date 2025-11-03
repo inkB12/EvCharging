@@ -1,12 +1,62 @@
 ﻿@page
 @model EVCharging.Pages.Auth.LoginModel
 @{
+    ViewData["Title"] = "Login";
 }
-<h2>Login</h2>
-<form method="post">
-    <div asp-validation-summary="All"></div>
-    <div><label>Email</label><input asp-for="Input.Email" /></div>
-    <div><label>Password</label><input asp-for="Input.Password" type="password" /></div>
-    <button type="submit">Login</button>
-</form>
-<p class="text-danger">@Model.Error</p>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-12 col-md-8 col-lg-5">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <h2 class="mb-3 text-center">Đăng nhập</h2>
+
+                @if (!string.IsNullOrEmpty(Model.Info))
+                {
+                    <div class="alert alert-success" role="alert">@Model.Info</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-danger" role="alert">@Model.Error</div>
+                }
+
+                <form method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <input asp-for="Input.Password" type="password" class="form-control" placeholder="••••••••" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePwd(this)">👁</button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 rounded-3">
+                        Đăng nhập
+                    </button>
+
+                    <div class="text-center mt-3">
+                        Chưa có tài khoản?
+                        <a asp-page="/Auth/Register">Đăng ký ngay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePwd(btn) {
+            const input = btn.closest('.input-group').querySelector('input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+}
