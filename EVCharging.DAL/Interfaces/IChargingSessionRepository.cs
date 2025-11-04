@@ -6,5 +6,8 @@ namespace EVCharging.DAL.Interfaces
     {
         Task<ChargingSession?> GetByIdAsync(int sessionId);
         Task<List<ChargingSession>> GetAllByUserAndYear(int userId, int year);
+        Task<List<int>> GetBusyPointIdsAsync(List<int> pointIds, DateTime start, DateTime end);
+        Task<bool> HasConflictAsync(int pointId, DateTime start, DateTime end);
+        Task<int> CreateAsync(ChargingSession entity);
     }
 }

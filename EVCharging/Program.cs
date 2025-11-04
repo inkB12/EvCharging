@@ -36,6 +36,12 @@ namespace EVCharging
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IMapSchedulingService, MapSchedulingService>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IBookingQueryService, BookingQueryService>();
+            builder.Services.AddScoped<IBookingQueryService, BookingQueryService>();
+            builder.Services.AddScoped<IBookingCommandService, BookingCommandService>();
 
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));

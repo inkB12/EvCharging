@@ -2,11 +2,6 @@
 using EVCharging.BLL.Interfaces;
 using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVCharging.BLL.Services
 {
@@ -29,7 +24,9 @@ namespace EVCharging.BLL.Services
                 Description = s.Description,
                 Location = s.Location,
                 Station = s.Station,
-                Status = s.Status
+                Status = s.Status,
+                Longtitude = s.Longtitude,
+                Latitude = s.Latitude
             }).ToList();
         }
 
@@ -44,7 +41,9 @@ namespace EVCharging.BLL.Services
                 Description = s.Description,
                 Location = s.Location,
                 Station = s.Station,
-                Status = s.Status
+                Status = s.Status,
+                Latitude = s.Latitude,
+                Longtitude = s.Longtitude
             };
         }
 
@@ -56,7 +55,9 @@ namespace EVCharging.BLL.Services
                 Description = dto.Description,
                 Location = dto.Location,
                 Station = dto.Station,
-                Status = dto.Status
+                Status = dto.Status,
+                Latitude = dto.Latitude,
+                Longtitude = dto.Longtitude
             };
             return await _repo.CreateAsync(entity);
         }
@@ -70,7 +71,9 @@ namespace EVCharging.BLL.Services
                 Description = dto.Description,
                 Location = dto.Location,
                 Station = dto.Station,
-                Status = dto.Status
+                Status = dto.Status,
+                Latitude = dto.Latitude,
+                Longtitude = dto.Longtitude
             };
             await _repo.UpdateAsync(entity);
         }
@@ -87,8 +90,12 @@ namespace EVCharging.BLL.Services
             {
                 Id = s.Id,
                 Name = s.Name,
+                Description = s.Description,
                 Location = s.Location,
-                Status = s.Status
+                Station = s.Station,
+                Status = s.Status,
+                Longtitude = s.Longtitude,
+                Latitude = s.Latitude
             }).ToList();
         }
 

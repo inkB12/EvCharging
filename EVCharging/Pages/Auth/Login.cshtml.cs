@@ -30,7 +30,11 @@ namespace EVCharging.Pages.Auth
                 return Page();
             }
 
-            // TODO: set session/cookie/jwt theo app của bạn
+            HttpContext.Session.SetInt32("User.Id", user.Id);
+            HttpContext.Session.SetString("User.Email", user.Email);
+            HttpContext.Session.SetString("User.FullName", user.FullName ?? string.Empty);
+            HttpContext.Session.SetString("User.Role", user.Role ?? "User");
+
             return RedirectToPage("/Index");
         }
     }
