@@ -82,6 +82,54 @@ namespace EVCharging.BLL.Services
             HomeStationId = u.HomeStationId
         };
 
+        public async Task<UserProfileDTO?> GetProfileAsync(int userId)
+        {
+            var u = await _repo.GetByIdAsync(userId);
+            if (u == null || u.IsDeleted) return null;
+
+            return new UserProfileDTO
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FullName = u.FullName,
+                Phone = u.Phone,
+                HomeStationId = u.HomeStationId,
+                Role = u.Role
+            };
+        }
+
+        public async Task<(bool ok, string msg)> UpdateProfileAsync(int userId, UpdateProfileRequest req)
+        {
+            var u = await _repo.GetByIdAsync(userId);
+            if (u == null || u.IsDeleted) return (false, "Tài khoản không tồn tại hoặc đã bị khóa.");
+
+            u.FullName = req.FullName?.Trim();
+            u.Phone = string.IsNullOrWhiteSpace(req.Phone) ? null : req.Phone.Trim();
+            u.HomeStationId = req.HomeStationId; // có thể null
+
+            await _repo.UpdateAsync(u);
+            return (true, "Cập nhật thông tin thành công.");
+        }
+
+        public async Task<(bool ok, string msg)> ChangePasswordAsync(int userId, ChangePasswordRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.NewPassword) || req.NewPassword.Length < 6)
+                return (false, "Mật khẩu mới tối thiểu 6 ký tự.");
+
+            var u = await _repo.GetByIdAsync(userId);
+            if (u == null || u.IsDeleted) return (false, "Tài khoản không tồn tại hoặc đã bị khóa.");
+
+            // xác thực mật khẩu hiện tại
+            if (HashSHA256(req.CurrentPassword) != u.Password)
+                return (false, "Mật khẩu hiện tại không đúng.");
+
+            u.Password = HashSHA256(req.NewPassword);
+            await _repo.UpdateAsync(u);
+
+            return (true, "Đổi mật khẩu thành công.");
+        }
+
+
         private static string NormalizeEmail(string email)
             => email.Trim().ToLowerInvariant();
 

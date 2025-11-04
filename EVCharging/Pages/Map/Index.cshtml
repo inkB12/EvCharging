@@ -1,0 +1,266 @@
+﻿@page
+@model EVCharging.Pages.Map.IndexModel
+@{
+    ViewData["Title"] = "EV Stations Map";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+<style>
+    .wrap {
+        display: grid;
+        gap: 12px;
+        margin: 16px;
+    }
+
+    .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        background: #fafafa
+    }
+
+        .toolbar input {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            min-width: 240px
+        }
+
+        .toolbar .btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 10px;
+            cursor: pointer
+        }
+
+    #map {
+        height: 540px;
+        border-radius: 14px;
+        box-shadow: 0 8px 28px rgba(0,0,0,.08)
+    }
+
+    .ev-marker {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%,#b6ffb6,#39c65a 60%,#2aa84a);
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px rgba(0,0,0,.15),0 8px 14px rgba(0,0,0,.2);
+        display: grid;
+        place-items: center;
+        transform: translate(-50%,-50%);
+        position: relative
+    }
+
+        .ev-marker span {
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,.35)
+        }
+
+    .panel {
+        display: grid;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        background: #fff
+    }
+
+        .panel h4 {
+            margin: 0
+        }
+
+    .row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap
+    }
+
+        .row .form-control, .row .form-select {
+            min-width: 180px
+        }
+
+    .muted {
+        color: #666;
+        font-size: 13px
+    }
+</style>
+
+<div class="wrap">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="toolbar">
+        <input id="q" type="text" placeholder="Tìm trạm theo tên/địa chỉ..." />
+        <button id="fitAllBtn" class="btn">Fit all</button>
+        <span class="muted" style="margin-left:auto">Chọn trạm trên map hoặc panel bên dưới để đặt lịch</span>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="panel">
+        <h4>Đặt lịch sạc</h4>
+        <div class="row">
+            <select id="stationSelect" class="form-select">
+                <option value="">-- Chọn trạm sạc --</option>
+            </select>
+
+            <select id="portTypeSelect" class="form-select" disabled>
+                <option value="">-- Chọn loại cổng (Port Type) --</option>
+            </select>
+
+            <input id="dateInput" type="date" class="form-control" />
+            <select id="slotSelect" class="form-select">
+                <!-- 8h..22h, mỗi slot 1h -->
+            </select>
+
+            <button id="checkBtn" class="btn">Kiểm tra</button>
+            <button id="bookBtn" class="btn" disabled>Đặt lịch</button>
+            <span id="statusMsg" class="muted"></span>
+        </div>
+        <div class="muted">Lưu ý: Mỗi slot là 1 tiếng (8:00–9:00, 9:00–10:00, ...). Hệ thống sẽ chọn 1 Charging Point rảnh theo Port Type.</div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script>
+    const map = L.map('map', { zoomControl: true }).setView([16.0471, 108.2068], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+    const evIcon = L.divIcon({className:'', html:'<div class="ev-marker"><span>⚡</span></div>', iconSize:[28,28], iconAnchor:[14,14], popupAnchor:[0,-14]});
+    const layerGroup = L.layerGroup().addTo(map);
+
+    const qInput = document.getElementById('q');
+    const stationSelect = document.getElementById('stationSelect');
+    const portTypeSelect = document.getElementById('portTypeSelect');
+    const dateInput = document.getElementById('dateInput');
+    const slotSelect = document.getElementById('slotSelect');
+    const checkBtn = document.getElementById('checkBtn');
+    const bookBtn = document.getElementById('bookBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    const slots = [];
+    for (let h=8; h<22; h++){ slots.push({ label: `${h}:00 - ${h+1}:00`, start:h, end:h+1 }); }
+    slotSelect.innerHTML = slots.map(s=>`<option value="${s.start}">${s.label}</option>`).join('');
+
+    let stationsRaw = [];
+    let filtered = [];
+
+    async function loadStations(){
+        const res = await fetch('/Map/Api?handler=Stations');
+        stationsRaw = await res.json(); // [{id,name,location,long,lat,status}]
+        filtered = stationsRaw;
+        renderMarkers(filtered);
+        renderStationOptions(filtered);
+        fitAll(filtered);
+    }
+    function renderMarkers(list){
+        layerGroup.clearLayers();
+        list.forEach(s=>{
+            const m = L.marker([s.latitude, s.longtitude], {icon: evIcon})
+                .bindPopup(`<b>${escapeHtml(s.name)}</b><br/><span class="muted">${escapeHtml(s.location||'')}</span>`);
+            m.on('click', ()=>{
+                stationSelect.value = String(s.id);
+                loadPortTypes(s.id);
+            });
+            m.addTo(layerGroup);
+        })
+    }
+    function renderStationOptions(list){
+        stationSelect.innerHTML = `<option value="">-- Chọn trạm sạc --</option>`+
+            list.map(s=>`<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.location||'')})</option>`).join('');
+    }
+    function fitAll(list){
+        if(!list.length) return;
+        const b = L.latLngBounds(list.map(s=>[s.latitude,s.longtitude]));
+        map.fitBounds(b, {padding:[30,30]});
+    }
+    qInput.addEventListener('input', ()=>{
+        const q = qInput.value.trim().toLowerCase();
+        filtered = !q ? stationsRaw : stationsRaw.filter(s =>
+            (s.name||'').toLowerCase().includes(q) || (s.location||'').toLowerCase().includes(q));
+        renderMarkers(filtered);
+        renderStationOptions(filtered);
+    });
+    document.getElementById('fitAllBtn').addEventListener('click', ()=>fitAll(filtered));
+
+        stationSelect.addEventListener('change', async ()=>{
+      const sid = stationSelect.value;
+      portTypeSelect.disabled = !sid;
+      if (sid) await loadPortTypes(sid);
+    });
+
+    async function loadPortTypes(stationId){
+      portTypeSelect.disabled = true;
+      portTypeSelect.innerHTML = `<option value="">Đang tải...</option>`;
+      try {
+        const res = await fetch(`/Map/Api?handler=PortTypes&stationId=${stationId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const types = await res.json(); // ["AC","CCS","CHAdeMO"]
+
+        if (!Array.isArray(types) || types.length === 0) {
+          portTypeSelect.innerHTML = `<option value="">(Không có cổng khả dụng)</option>`;
+          portTypeSelect.disabled = true;
+          return;
+        }
+
+        portTypeSelect.innerHTML = `<option value="">-- Chọn loại cổng --</option>` +
+          types.map(t => `<option value="${t}">${t}</option>`).join('');
+        portTypeSelect.disabled = false;
+      } catch (err) {
+        console.error('Load PortTypes error:', err);
+        portTypeSelect.innerHTML = `<option value="">Lỗi tải Port Types</option>`;
+        portTypeSelect.disabled = true;
+      }
+    }
+
+    checkBtn.addEventListener('click', async ()=>{
+        statusMsg.textContent = '';
+        bookBtn.disabled = true;
+
+        const stationId = stationSelect.value;
+        const portType = portTypeSelect.value;
+        const date = dateInput.value;
+        const startHour = parseInt(slotSelect.value,10);
+
+        if (!stationId || !portType || !date) {
+            statusMsg.textContent = 'Vui lòng chọn đầy đủ Station, Port Type và Ngày.';
+            return;
+        }
+
+        const res = await fetch(`/Map/Api?handler=Check&stationId=${stationId}&portType=${encodeURIComponent(portType)}&date=${date}&startHour=${startHour}`);
+        const data = await res.json(); // {ok, msg, candidatePointId}
+        statusMsg.textContent = data.msg || '';
+        bookBtn.disabled = !data.ok;
+        bookBtn.dataset.pointId = data.candidatePointId || '';
+    });
+
+    bookBtn.addEventListener('click', async ()=>{
+        const stationId = stationSelect.value;
+        const portType = portTypeSelect.value;
+        const date = dateInput.value;
+        const startHour = parseInt(slotSelect.value,10);
+        const candidatePointId = bookBtn.dataset.pointId;
+
+        if (!candidatePointId) return;
+
+        const payload = { stationId: +stationId, portType, date, startHour: +startHour, pointId: +candidatePointId };
+        const res = await fetch('/Map/Api?handler=Book', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json(); // {ok,msg,bookingId,sessionId}
+        statusMsg.textContent = data.msg || '';
+        if (data.ok) {
+            bookBtn.disabled = true;
+        }
+    });
+
+    function escapeHtml(str){return String(str??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
+
+    loadStations();
+</script>
