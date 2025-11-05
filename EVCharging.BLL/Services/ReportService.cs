@@ -76,16 +76,24 @@ namespace EVCharging.BLL.Services
         {
             var sessions = await _chargingSessionRepo.GetAllByUserAndYear(userId, year);
 
-            return [.. sessions
-                .GroupBy(s => s.StartTime.Hour)
-                .Select(g => new ChargingTimeHabitDTO()
+            // Ưu tiên giờ từ Session.StartTime; nếu null thì lấy Booking.StartTime
+            var result = sessions
+                .Select(s => s.StartTime ?? s.Booking.StartTime)   // DateTime?
+                .Where(dt => dt.HasValue)                          // bỏ null
+                .Select(dt => DateTime.SpecifyKind(dt!.Value, DateTimeKind.Utc)) // nếu cần, gắn Kind=Utc
+                .GroupBy(dt => dt.Hour)                            // 0..23
+                .Select(g => new ChargingTimeHabitDTO
                 {
                     HourOfDay = g.Key,
-                    TimeRangeLabel = $"{g.Key:00}:00 - {g.Key + 1:00}:00",
+                    TimeRangeLabel = $"{g.Key:00}:00 - {((g.Key + 1) % 24):00}:00",
                     SessionCount = g.Count()
                 })
                 .OrderBy(t => t.HourOfDay)
-                .Take(5)];
+                .Take(5)
+                .ToList();
+
+            return result;
         }
+
     }
 }

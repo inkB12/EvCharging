@@ -94,8 +94,8 @@ public partial class EvchargingContext : DbContext
 
             entity.HasIndex(e => e.PointId, "IX_Session_Point");
 
-            entity.HasIndex(e => e.StartTime, "IX_Session_Start");
-
+            //entity.HasIndex(e => e.StartTime, "IX_Session_Start");
+            entity.Property(e => e.StartTime).HasPrecision(0);
             entity.Property(e => e.EndTime).HasPrecision(0);
             entity.Property(e => e.EnergyConsumedKwh)
                 .HasColumnType("decimal(18, 3)")

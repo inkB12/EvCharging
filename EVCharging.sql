@@ -117,7 +117,7 @@ CREATE TABLE dbo.ChargingSession
     Id                 INT IDENTITY(1,1) PRIMARY KEY,
     BookingId          INT NOT NULL,                      -- theo ERD: Session gắn với Booking
     PointId            INT NOT NULL,                      -- 1 Point -> N Session
-    StartTime          DATETIME2(0) NOT NULL,
+    StartTime          DATETIME2(0) NULL,
     EndTime            DATETIME2(0) NULL,
     EnergyConsumedKWh  DECIMAL(18,3) NULL,
     [Status]           NVARCHAR(20) NOT NULL CONSTRAINT DF_Session_Status DEFAULT(N'coming-soon'),
