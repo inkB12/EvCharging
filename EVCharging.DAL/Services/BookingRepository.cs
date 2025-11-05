@@ -37,5 +37,26 @@ namespace EVCharging.DAL.Services
             _db.Bookings.Update(entity);
             await _db.SaveChangesAsync();
         }
+
+        public async Task<Booking?> GetByIdWithGraphAsync(int id)
+        {
+            return await _db.Bookings
+                .Include(b => b.ChargingSessions)
+                    .ThenInclude(s => s.Point)
+                        .ThenInclude(p => p.Station)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public async Task<List<Booking>> GetByStationAsync(int stationId)
+        {
+            return await _db.Bookings
+                .AsNoTracking()
+                .Include(b => b.ChargingSessions)
+                    .ThenInclude(s => s.Point)
+                        .ThenInclude(p => p.Station)
+                .Where(b => b.ChargingSessions.Any(s => s.Point.StationId == stationId))
+                .OrderByDescending(b => b.StartTime)
+                .ToListAsync();
+        }
     }
 }

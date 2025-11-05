@@ -47,6 +47,7 @@ namespace EVCharging
             builder.Services.AddScoped<IBookingQueryService, BookingQueryService>();
             builder.Services.AddScoped<IBookingCommandService, BookingCommandService>();
             builder.Services.AddScoped<IChargingSessionService, ChargingSessionService>();
+            builder.Services.AddScoped<IStaffBookingQueryService, StaffBookingQueryService>();
 
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
