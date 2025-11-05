@@ -8,7 +8,7 @@ public partial class ChargingSession
 
     public int PointId { get; set; }
 
-    public DateTime StartTime { get; set; }
+    public DateTime? StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }
 

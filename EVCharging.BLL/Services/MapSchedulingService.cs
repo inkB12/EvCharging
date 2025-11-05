@@ -112,7 +112,7 @@ namespace EVCharging.BLL.Services
             {
                 BookingId = bookingId,
                 PointId = pointId,
-                StartTime = startUtc,
+                StartTime = null,
                 EndTime = null,
                 EnergyConsumedKwh = null,
                 Status = "coming-soon"
