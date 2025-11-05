@@ -1,6 +1,6 @@
 ﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
-using EVCharging.DAL.Interfaces;
+// XÓA: using EVCharging.DAL.Interfaces; // Không cần nữa
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,16 +10,14 @@ namespace EVCharging.Pages.Staff.ChargingPoints
     {
         private readonly IChargingPointService _pointService;
         private readonly IChargingStationService _stationService;
-        private readonly IUserRepository _userRepository;
+        // XÓA: private readonly IUserRepository _userRepository;
 
         public IndexModel(
             IChargingPointService pointService,
-            IChargingStationService stationService,
-            IUserRepository userRepository)
+            IChargingStationService stationService) // <-- XÓA _userRepository
         {
             _pointService = pointService;
             _stationService = stationService;
-            _userRepository = userRepository;
         }
 
         public string StationName { get; set; } = "Không xác định";
@@ -27,33 +25,23 @@ namespace EVCharging.Pages.Staff.ChargingPoints
 
         public async Task<IActionResult> OnGetAsync()
         {
-            int staffUserId = 1; // Gán cứng UserId (sẽ sửa sau khi có login)
+            // SỬA Ở ĐÂY: Lấy StationId trực tiếp từ Session
+            int? stationId = HttpContext.Session.GetInt32("User.HomeStationId");
 
-            // SỬA Ở ĐÂY: Gọi GetByIdAsync thay vì GetById
-            var staffUser = await _userRepository.GetByIdAsync(staffUserId);
-
-            if (staffUser == null)
-            {
-                TempData["Message"] = "Lỗi: Không tìm thấy nhân viên với ID này.";
-                return Page();
-            }
-
-            if (!staffUser.HomeStationId.HasValue)
+            if (!stationId.HasValue)
             {
                 TempData["Message"] = "Nhân viên này chưa được gán vào trạm sạc nào.";
                 return Page();
             }
 
-            int stationId = staffUser.HomeStationId.Value;
-
             // Mọi thứ từ đây đều là async, sẽ không còn lỗi
-            var stationDto = await _stationService.GetByIdAsync(stationId);
+            var stationDto = await _stationService.GetByIdAsync(stationId.Value); // Sửa: GetByIdAsync
             if (stationDto != null)
             {
                 StationName = stationDto.Name;
             }
 
-            ChargingPoints = await _pointService.GetByStationAsync(stationId);
+            ChargingPoints = await _pointService.GetByStationAsync(stationId.Value);
 
             return Page();
         }
