@@ -1,0 +1,44 @@
+﻿@page
+@model EVCharging.Pages.Staff.Reports.DeleteModel
+
+@{
+    ViewData["Title"] = "Xác nhận Xóa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="text-danger">Bạn có chắc chắn muốn xóa báo cáo này?</h5>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">Tiêu đề</dt>
+                    <dd class="col-sm-9">@Model.Report.Title</dd>
+                    
+                    <dt class="col-sm-3">Điểm sạc</dt>
+                    <dd class="col-sm-9">@Model.Report.PointName</dd>
+
+                    <dt class="col-sm-3">Người báo cáo</dt>
+                    <dd class="col-sm-9">@Model.Report.ReportedByUserName</dd>
+
+                    <dt class="col-sm-3">Trạng thái</dt>
+                    <dd class="col-sm-9">@Model.Report.Status</dd>
+                </dl>
+                
+                <form method="post">
+                    <input type="hidden" asp-for="Report.Id" />
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash-alt me-1"></i> Xóa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

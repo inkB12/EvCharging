@@ -36,6 +36,10 @@ namespace EVCharging
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
+
+            builder.Services.AddScoped<IFaultReportRepository, FaultReportRepository>();
+            builder.Services.AddScoped<IFaultReportService, FaultReportService>();
+
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IMapSchedulingService, MapSchedulingService>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
