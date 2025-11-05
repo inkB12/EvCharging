@@ -40,7 +40,6 @@ namespace EVCharging.Pages.Auth
             }
             else
             {
-                // Nếu muốn xóa key khi null:
                 HttpContext.Session.Remove("User.HomeStationId");
             }
 
