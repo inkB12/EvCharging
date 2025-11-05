@@ -23,35 +23,22 @@ namespace EVCharging.Pages.Staff.Reports
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            // Tên hàm này (GetFaultReportByIdAsync) phải khớp với IFaultReportService
-            Report = await _faultReportService.GetFaultReportByIdAsync(id); // Giả sử tên hàm là GetReportByIdAsync
-
+            Report = await _faultReportService.GetFaultReportByIdAsync(id); // Giả sử tên hàm là GetFaultReportByIdAsync
             if (Report == null)
             {
                 return NotFound();
             }
 
             // SỬA Ở ĐÂY:
-            // Load danh sách điểm sạc TẠM THỜI của trạm số 1
-            var points = await _pointService.GetByStationAsync(1); // <-- Sửa hàm không tồn tại
-
-            ChargingPointList = new SelectList(points, "Id", "PortType", Report.PointId); // <-- Đổi "Name" thành "PortType"
+            var stationId = HttpContext.Session.GetInt32("User.HomeStationId");
+            var points = await _pointService.GetByStationAsync(stationId.Value); // Sửa số 1
+            ChargingPointList = new SelectList(points, "Id", "PortType", Report.PointId);
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                // SỬA Ở ĐÂY:
-                // Phải load lại SelectList nếu post không thành công
-                var points = await _pointService.GetByStationAsync(1); // <-- Sửa hàm không tồn tại
-                ChargingPointList = new SelectList(points, "Id", "PortType", Report.PointId); // <-- Đổi "Name" thành "PortType"
-                return Page();
-            }
-
-            // Tên hàm này (UpdateFaultReportAsync) phải khớp với IFaultReportService
-            await _faultReportService.UpdateFaultReportAsync(Report); // Giả sử tên hàm là UpdateReportAsync
+            await _faultReportService.UpdateFaultReportAsync(Report); // Giả sử tên hàm là UpdateFaultReportAsync
 
             return RedirectToPage("./Index");
         }

@@ -34,7 +34,10 @@ namespace EVCharging.Pages.Auth
             HttpContext.Session.SetString("User.Email", user.Email);
             HttpContext.Session.SetString("User.FullName", user.FullName ?? string.Empty);
             HttpContext.Session.SetString("User.Role", user.Role ?? "User");
-
+            if (user.HomeStationId.HasValue)
+            {
+                HttpContext.Session.SetInt32("User.HomeStationId", user.HomeStationId.Value);
+            }
             return RedirectToPage("/Index");
         }
     }

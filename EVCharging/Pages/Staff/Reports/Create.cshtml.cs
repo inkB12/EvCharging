@@ -1,5 +1,6 @@
 ﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
+// XÓA: using EVCharging.Infrastructure; // (Vì bạn không dùng SessionKeys.cs)
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,30 +23,53 @@ namespace EVCharging.Pages.Staff.Reports
 
         public SelectList ChargingPointList { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            // SỬA Ở ĐÂY:
-            // Load danh sách điểm sạc TẠM THỜI của trạm số 1 (vì chưa có login)
-            var points = await _pointService.GetByStationAsync(1); // <-- Gán cứng StationId = 1
+            // BƯỚC 1: KIỂM TRA ROLE TRƯỚC
+            var userRole = HttpContext.Session.GetString("User.Role");
+            if (userRole != "Staff")
+            {
+                // Nếu không phải Staff, đuổi về trang chủ
+                TempData["Error"] = "Bạn không có quyền truy cập trang này.";
+                return RedirectToPage("/Index");
+            }
 
-            // Giả sử ChargingPointDto có thuộc tính 'Id' và 'Name'
-            // (Nếu DTO của bạn không có 'Name', bạn cần sửa "Name" thành "Id" hoặc "PortType")
-            ChargingPointList = new SelectList(points, "Id", "PortType"); // <-- Đổi "Name" thành "PortType" hoặc gì đó có ý nghĩa
+            // BƯỚC 2: KIỂM TRA STATION ID
+            var stationId = HttpContext.Session.GetInt32("User.HomeStationId");
+
+            if (stationId.HasValue)
+            {
+                var points = await _pointService.GetByStationAsync(stationId.Value);
+                ChargingPointList = new SelectList(points, "Id", "PortType"); // Dùng PortType
+            }
+            else
+            {
+                // Staff này có role nhưng chưa được gán trạm
+                ChargingPointList = new SelectList(Enumerable.Empty<SelectListItem>());
+                TempData["Message"] = "Tài khoản Staff của bạn chưa được gán trạm. Không thể tạo báo cáo.";
+            }
+
+            return Page(); // <-- Phải return Page() ở đây
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // Lấy UserId trước để kiểm tra
+            var userId = HttpContext.Session.GetInt32("User.Id");
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Auth/Login"); // Bắt đăng nhập lại
+            }
+
+            // KIỂM TRA MODELSTATE
 
 
-            // GÁN (HARDCODE) ID CỦA STAFF (kiểu int) VÌ CHƯA CÓ LOGIN
-            // Bạn hãy vào DB, tìm 1 UserId (kiểu int) của Staff và dán vào đây
-            Report.UserId = 1; // <-- THAY ID NÀY
-
+            // Nếu mọi thứ OK, gán và tạo
+            Report.UserId = userId.Value;
             Report.ReportTime = DateTime.UtcNow;
-            Report.Status = "Open"; // Trạng thái ban đầu
+            Report.Status = "Open";
 
-            // Tên hàm này (CreateFaultReportAsync) phải khớp với IFaultReportService
-            await _faultReportService.CreateFaultReportAsync(Report); // Giả sử tên hàm là CreateReportAsync
+            await _faultReportService.CreateFaultReportAsync(Report);
 
             return RedirectToPage("./Index");
         }
