@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EVCharging.DAL.Entities;
+﻿namespace EVCharging.DAL.Entities;
 
 public partial class ChargingStation
 {
@@ -12,6 +9,10 @@ public partial class ChargingStation
     public string? Description { get; set; }
 
     public string? Location { get; set; }
+
+    public decimal Longtitude { get; set; }
+
+    public decimal Latitude { get; set; }
 
     public string? Station { get; set; }
 

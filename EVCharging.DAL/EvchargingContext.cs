@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using EVCharging.DAL.Entities;
+﻿using EVCharging.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVCharging.DAL;
@@ -32,15 +30,15 @@ public partial class EvchargingContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=(local); Database=EVCharging; Uid=sa; Pwd=1234567890; TrustServerCertificate=True");
+    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+    //        => optionsBuilder.UseSqlServer("Server=localhost; Database=EVCharging; Trusted_Connection=True; TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Booking__3214EC074D59CDB9");
+            entity.HasKey(e => e.Id).HasName("PK__Booking__3214EC071838C93F");
 
             entity.ToTable("Booking");
 
@@ -64,7 +62,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<ChargingPoint>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC07BB79306F");
+            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC073B2F965F");
 
             entity.ToTable("ChargingPoint");
 
@@ -88,7 +86,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<ChargingSession>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC07095995C9");
+            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC0765ECFDDE");
 
             entity.ToTable("ChargingSession");
 
@@ -120,12 +118,14 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<ChargingStation>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC0704BC8D5F");
+            entity.HasKey(e => e.Id).HasName("PK__Charging__3214EC0733045952");
 
             entity.ToTable("ChargingStation");
 
             entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Latitude).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Location).HasMaxLength(300);
+            entity.Property(e => e.Longtitude).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Name).HasMaxLength(150);
             entity.Property(e => e.Station).HasMaxLength(50);
             entity.Property(e => e.Status)
@@ -135,7 +135,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<FaultReport>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__FaultRep__3214EC07AEF36634");
+            entity.HasKey(e => e.Id).HasName("PK__FaultRep__3214EC07FAFA9E31");
 
             entity.ToTable("FaultReport");
 
@@ -165,7 +165,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<ServicePlan>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ServiceP__3214EC07233686A0");
+            entity.HasKey(e => e.Id).HasName("PK__ServiceP__3214EC0732FB770D");
 
             entity.ToTable("ServicePlan");
 
@@ -176,7 +176,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC07C80BB0F2");
+            entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC074F4BCB5B");
 
             entity.ToTable("Transaction");
 
@@ -199,7 +199,7 @@ public partial class EvchargingContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__User__3214EC07550FC740");
+            entity.HasKey(e => e.Id).HasName("PK__User__3214EC075FADCE69");
 
             entity.ToTable("User");
 
