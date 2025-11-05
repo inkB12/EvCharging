@@ -8,5 +8,7 @@ namespace EVCharging.DAL.Interfaces
         Task<List<Booking>> GetByUserAsync(int userId);
         Task<Booking?> GetByIdAsync(int id);
         Task UpdateAsync(Booking entity);
+        Task<Booking?> GetByIdWithGraphAsync(int id);
+        Task<List<Booking>> GetByStationAsync(int stationId);
     }
 }

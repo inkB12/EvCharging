@@ -2,6 +2,7 @@
 @model EVCharging.Pages.Map.IndexModel
 @{
     ViewData["Title"] = "EV Stations Map";
+    Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
@@ -238,27 +239,46 @@
         bookBtn.dataset.pointId = data.candidatePointId || '';
     });
 
-    bookBtn.addEventListener('click', async ()=>{
-        const stationId = stationSelect.value;
-        const portType = portTypeSelect.value;
-        const date = dateInput.value;
-        const startHour = parseInt(slotSelect.value,10);
-        const candidatePointId = bookBtn.dataset.pointId;
+        bookBtn.addEventListener('click', async () => {
+      const stationId = stationSelect.value;
+      const portType  = portTypeSelect.value;
+      const date      = dateInput.value;
+      const startHour = parseInt(slotSelect.value, 10);
+      const candidatePointId = bookBtn.dataset.pointId;
 
-        if (!candidatePointId) return;
+      if (!candidatePointId) return;
 
-        const payload = { stationId: +stationId, portType, date, startHour: +startHour, pointId: +candidatePointId };
-        const res = await fetch('/Map/Api?handler=Book', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(payload)
+      const payload = {
+        stationId: +stationId,
+        portType,
+        date,
+        startHour: +startHour,
+        pointId: +candidatePointId
+      };
+
+      try {
+        const res  = await fetch('/Map/Api?handler=Book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-        const data = await res.json(); // {ok,msg,bookingId,sessionId}
+        const data = await res.json(); // { ok, msg, bookingId, sessionId }
+
         statusMsg.textContent = data.msg || '';
         if (data.ok) {
-            bookBtn.disabled = true;
+          // 👉 Redirect sang trang Booking
+          window.location.href = '/Booking';
+          // (Nếu muốn mang theo bookingId: window.location.href = `/Booking?new=${data.bookingId}`;)
+        } else {
+          bookBtn.disabled = false;
         }
+      } catch (e) {
+        console.error(e);
+        statusMsg.textContent = 'Có lỗi khi tạo lịch.';
+        bookBtn.disabled = false;
+      }
     });
+
 
     function escapeHtml(str){return String(str??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
 

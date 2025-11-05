@@ -12,14 +12,8 @@ namespace EVCharging.Pages
             _logger = logger;
         }
 
-        public IActionResult OnGet()
+        public void OnGet()
         {
-            if (!User.Identity!.IsAuthenticated)
-            {
-                return RedirectToPage("/Auth/Login");
-            }
-            // Redirect to actual Equipment list page
-            return RedirectToPage("/Booking/Index");
         }
     }
 }

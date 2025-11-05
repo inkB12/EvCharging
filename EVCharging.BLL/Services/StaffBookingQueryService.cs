@@ -4,34 +4,29 @@ using EVCharging.DAL.Interfaces;
 
 namespace EVCharging.BLL.Services
 {
-    public class BookingQueryService : IBookingQueryService
+    public class StaffBookingQueryService : IStaffBookingQueryService
     {
         private readonly IBookingRepository _bookingRepo;
 
-        public BookingQueryService(IBookingRepository bookingRepo)
+        public StaffBookingQueryService(IBookingRepository bookingRepo)
         {
             _bookingRepo = bookingRepo;
         }
 
-        public async Task<List<BookingListItemDTO>> GetMyBookingsAsync(int userId)
+        // List tất cả booking có session gắn với stationId (qua Point -> Station)
+        public async Task<List<BookingListItemDTO>> GetByStationAsync(int stationId)
         {
-            var list = await _bookingRepo.GetByUserAsync(userId);
-
+            var list = await _bookingRepo.GetByStationAsync(stationId);
             var result = new List<BookingListItemDTO>(list.Count);
+
             foreach (var b in list)
             {
                 var firstSession = b.ChargingSessions.FirstOrDefault();
                 var point = firstSession?.Point;
                 var station = point?.Station;
 
-                // Gắn Kind=Utc để UI có thể ToLocalTime() chính xác
-                DateTime? startUtc = b.StartTime.HasValue
-                    ? DateTime.SpecifyKind(b.StartTime.Value, DateTimeKind.Utc)
-                    : (DateTime?)null;
-
-                DateTime? endUtc = b.EndTime.HasValue
-                    ? DateTime.SpecifyKind(b.EndTime.Value, DateTimeKind.Utc)
-                    : (DateTime?)null;
+                DateTime? startUtc = b.StartTime.HasValue ? DateTime.SpecifyKind(b.StartTime.Value, DateTimeKind.Utc) : null;
+                DateTime? endUtc = b.EndTime.HasValue ? DateTime.SpecifyKind(b.EndTime.Value, DateTimeKind.Utc) : null;
 
                 result.Add(new BookingListItemDTO
                 {
@@ -48,10 +43,15 @@ namespace EVCharging.BLL.Services
             return result;
         }
 
-        public async Task<BookingDetailDTO?> GetDetailAsync(int userId, int bookingId)
+        // Detail: chỉ trả nếu booking thuộc stationId
+        public async Task<BookingDetailDTO?> GetDetailAsync(int? stationId, int bookingId)
         {
             var b = await _bookingRepo.GetByIdWithGraphAsync(bookingId);
-            if (b == null || b.UserId != userId) return null;
+            if (b == null) return null;
+
+            // hợp lệ khi có ít nhất 1 session thuộc stationId
+            var anyMatch = b.ChargingSessions.Any(s => s.Point?.StationId == stationId);
+            if (!anyMatch) return null;
 
             var dto = new BookingDetailDTO
             {
@@ -77,7 +77,6 @@ namespace EVCharging.BLL.Services
                     StationLocation = s.Point?.Station?.Location
                 });
             }
-
             return dto;
         }
     }

@@ -38,6 +38,11 @@ namespace EVCharging.Pages.Auth
             {
                 HttpContext.Session.SetInt32("User.HomeStationId", user.HomeStationId.Value);
             }
+            else
+            {
+                HttpContext.Session.Remove("User.HomeStationId");
+            }
+
             return RedirectToPage("/Index");
         }
     }
