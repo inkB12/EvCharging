@@ -1,72 +1,98 @@
 ﻿@page
 @model EVCharging.Pages.Staff.Reports.CreateModel
 @{
+    Layout = "_LayoutStaff"; // Đã liên kết
     ViewData["Title"] = "Tạo Báo cáo Sự cố";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">@ViewData["Title"]</h4>
+<!-- Nút quay lại (Dễ thao tác) -->
+<div class="mb-3">
+    <a asp-page="Index" class="btn btn-link text-secondary text-decoration-none px-0">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-warning">@TempData["Message"]</div>
+            }
+
+            <!-- Thêm icon, placeholder, và input-group -->
+            <div class="mb-3">
+                <label asp-for="Report.Title" class="form-label fw-bold">Tiêu đề</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-heading text-primary"></i></span>
+                    <input asp-for="Report.Title" class="form-control form-control-lg" placeholder="Ví dụ: Trụ sạc không nhận thẻ" />
+                </div>
+                <span asp-validation-for="Report.Title" class="text-danger small"></span>
             </div>
-            <div class="card-body">
-                <form method="post">
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                    @if (TempData["Message"] != null)
-                    {
-                        <div class="alert alert-warning">@TempData["Message"]</div>
-                    }
-
-                    <div class="mb-3">
-                        <label asp-for="Report.Title" class="form-label fw-bold">Tiêu đề</label>
-                        <input asp-for="Report.Title" class="form-control" />
-                        <span asp-validation-for="Report.Title" class="text-danger small"></span>
+            <div class="row">
+                <div class="col-md-7 mb-3">
+                    <label asp-for="Report.PointId" class="form-label fw-bold">Điểm sạc</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-charging-station text-primary"></i></span>
+                        <!--
+                          THÊM MỚI: Thêm class "select2-basic"
+                          để kích hoạt Combo Box (Select2)
+                        -->
+                        <select asp-for="Report.PointId" class="form-select select2-basic"
+                                asp-items="Model.ChargingPointList" data-placeholder="Tìm và chọn điểm sạc...">
+                            <option value="">-- Chọn điểm sạc --</option>
+                        </select>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Report.PointId" class="form-label fw-bold">Điểm sạc</label>
-                            <select asp-for="Report.PointId" class="form-select"
-                                    asp-items="Model.ChargingPointList">
-                                <option value="">-- Chọn điểm sạc --</option>
-                            </select>
-                            <span asp-validation-for="Report.PointId" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Report.Severity" class="form-label fw-bold">Mức độ</label>
-                            <select asp-for="Report.Severity" class="form-select">
-                                <option value="1">1 - Thấp</option>
-                                <option value="2">2 - Trung bình</option>
-                                <option value="3">3 - Cao</option>
-                                <option value="4">4 - Rất cao</option>
-                                <option value="5">5 - Khẩn cấp</option>
-                            </select>
-                            <span asp-validation-for="Report.Severity" class="text-danger small"></span>
-                        </div>
+                    <span asp-validation-for="Report.PointId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-5 mb-3">
+                    <label asp-for="Report.Severity" class="form-label fw-bold">Mức độ</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-triangle-exclamation text-primary"></i></span>
+                        <select asp-for="Report.Severity" class="form-select">
+                            <option value="1">1 - Thấp</option>
+                            <option value="2">2 - Trung bình</option>
+                            <option value="3">3 - Cao</option>
+                            <option value="4">4 - Rất cao</option>
+                            <option value="5">5 - Khẩn cấp</option>
+                        </select>
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Report.Description" class="form-label fw-bold">Mô tả (nếu có)</label>
-                        <textarea asp-for="Report.Description" class="form-control" rows="4"></textarea>
-                    </div>
-
-                    <hr />
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-page="Index" class="btn btn-secondary">Hủy</a>
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            Lưu Báo cáo
-                        </button>
-                    </div>
-                </form>
+                    <span asp-validation-for="Report.Severity" class="text-danger small"></span>
+                </div>
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label asp-for="Report.Description" class="form-label fw-bold">Mô tả (nếu có)</label>
+                <textarea asp-for="Report.Description" class="form-control" rows="4" placeholder="Mô tả rõ hơn về sự cố..."></textarea>
+            </div>
+
+            <hr class="my-4" />
+
+            <!-- Sửa lại nút bấm cho chuyên nghiệp -->
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-page="Index" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save me-2"></i> Lưu Báo cáo
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- Script để kích hoạt "Combo Box" (Select2) -->
+    <script>
+        $(document).ready(function() {
+            $('.select2-basic').select2({
+                theme: "bootstrap-5",
+                dropdownParent: $('.card-body form') // Fix lỗi Select2 bị kẹt trong card
+            });
+        });
+    </script>
 }

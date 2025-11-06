@@ -1,89 +1,132 @@
-﻿@page
+﻿@page "/staff/reports"
 @model EVCharging.Pages.Staff.Reports.IndexModel
 @{
-    ViewData["Title"] = "Quản lý Báo cáo Sự cố";
+    Layout = "_LayoutStaff";
+    ViewData["Title"] = "Báo cáo Sự cố";
 }
 
-<div class="container-fluid py-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">
-                <i class="fas fa-flag me-2"></i> @ViewData["Title"]
-            </h4>
-            <a class="btn btn-light btn-sm" asp-page="Create">
-                <i class="fas fa-plus me-1"></i> Tạo Báo cáo Mới
-            </a>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white border-0 py-3 d-flex justify-content-end">
+        <a class="btn btn-success" asp-page="Create">
+            <i class="fas fa-plus me-1"></i> Tạo Báo cáo Mới
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-borderless align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Tiêu đề</th>
+                        <th>Điểm sạc</th>
+                        <th>Người báo cáo</th>
+                        <th>Thời gian</th>
+                        <th>Mức độ</th>
+                        <th>Trạng thái</th>
+                        <th class="pe-4" style="width: 150px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Reports.Count() == 0)
+                    {
                         <tr>
-                            <th>Điểm sạc</th>
-                            <th>Tiêu đề</th>
-                            <th>Người báo cáo</th>
-                            <th>Thời gian</th>
-                            <th>Mức độ</th>
-                            <th>Trạng thái</th>
-                            <th style="width: 150px;">Hành động</th>
+                            <td colspan="7" class="text-center p-5 text-muted">
+                                <i class="fas fa-check-circle fa-2x mb-3 text-success"></i>
+                                <h5 class="mb-0">Không có báo cáo nào.</h5>
+                                <p>Trạm của bạn hiện không có sự cố nào được ghi nhận.</p>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
+                    }
+                    else
+                    {
                         @foreach (var item in Model.Reports)
                         {
                             <tr>
-                                <td><strong>@item.PointName</strong></td>
-                                <td>@item.Title</td>
-                                <td>@item.ReportedByUserName</td>
-                                <td>@item.ReportTime.ToString("g")</td>
+                                <td class="ps-4">
+                                    <strong class="text-dark">@item.Title</strong>
+                                    <p class="text-muted small m-0" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        @item.Description
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">ID: @item.PointId</span>
+                                    (@item.PointName)
+                                </td>
+                                <td>
+                                    <i class="fas fa-user me-1 text-muted"></i>
+                                    @item.ReportedByUserName
+                                </td>
+                                <td>
+                                    <i class="far fa-calendar-alt me-1 text-muted"></i>
+                                    @item.ReportTime.ToString("g")
+                                </td>
                                 <td>
                                     @if (item.Severity >= 4)
                                     {
-                                        <span class="badge bg-danger">Khẩn cấp ( @item.Severity )</span>
+                                        <span class="badge bg-danger">Khẩn cấp (@item.Severity)</span>
                                     }
                                     else if (item.Severity >= 3)
                                     {
-                                        <span class="badge bg-warning text-dark">Cao ( @item.Severity )</span>
+                                        <span class="badge bg-warning text-dark">Cao (@item.Severity)</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-info text-dark">Thấp ( @item.Severity )</span>
+                                        <span class="badge bg-info text-dark">Thấp (@item.Severity)</span>
                                     }
                                 </td>
                                 <td>
-                                    @if (item.Status == "Pending")
+                                    @if (item.Status == "Open")
                                     {
-                                        <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                        <span class="badge bg-danger">Mới (Open)</span>
+                                    }
+                                    else if (item.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">Đang xử lý</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-success">Đã xử lý</span>
+                                        <span class="badge bg-success">Đã xử lý (Resolved)</span>
                                     }
                                 </td>
-                                <td>
-                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
-
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                <td class="pe-4">
+                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
                                             data-bs-toggle="modal" data-bs-target="#deleteModal"
                                             data-id="@item.Id" data-title="@item.Title">
-                                        Xóa
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow">
             <form method="post" asp-page-handler="Delete">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteModalLabel">Xác nhận Xóa Báo cáo</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Xác nhận Xóa
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -91,7 +134,7 @@
                     <p class="text-danger fw-bold" id="deleteItemTitle"></p>
                     <input type="hidden" name="id" id="deleteItemId" />
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
                 </div>
@@ -102,18 +145,16 @@
 
 @section Scripts {
     <script>
-        // Script để truyền data-id vào modal khi nút Xóa được bấm
-        var deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Nút đã bấm
-            var id = button.getAttribute('data-id'); // Lấy data-id
-            var title = button.getAttribute('data-title'); // Lấy data-title
+        $(document).ready(function() {
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var id = button.getAttribute('data-id');
+                var title = button.getAttribute('data-title');
 
-            var modalInput = deleteModal.querySelector('#deleteItemId');
-            var modalTitle = deleteModal.querySelector('#deleteItemTitle');
-
-            modalInput.value = id;
-            modalTitle.textContent = 'Tiêu đề: "' + title + '"';
+                deleteModal.querySelector('#deleteItemId').value = id;
+                deleteModal.querySelector('#deleteItemTitle').textContent = 'Tiêu đề: "' + title + '"';
+            });
         });
     </script>
 }

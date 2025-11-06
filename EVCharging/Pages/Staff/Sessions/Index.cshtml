@@ -1,81 +1,139 @@
-﻿@page
+﻿@page "/staff/sessions"
 @model EVCharging.Pages.Staff.Sessions.IndexModel
 @{
-    ViewData["Title"] = "Danh sách Phiên sạc";
+    ViewData["Title"] = "Quản lý Phiên sạc";
+    Layout = "_LayoutStaff"; // Đã liên kết với Layout Staff
 }
 
-<div class="card shadow-sm">
-    <div class="card-header bg-info text-white">
-        <h4 class="mb-0">
-            <i class="fas fa-bolt me-2"></i> @ViewData["Title"]
-        </h4>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="d-flex align-items-center gap-2">
+            <i class="fas fa-filter text-muted me-2"></i>
+            <label class="form-label fw-bold m-0">Lọc theo Trạng thái:</label>
+
+            <select asp-for="StatusFilter" asp-items="Model.StatusOptions"
+                    class="form-select select2-basic" style="width: 250px;">
+                <option value="">Tất cả Trạng thái</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fas fa-check me-1"></i> Áp dụng
+            </button>
+            <a asp-page="Index" class="btn btn-link btn-sm text-secondary">Xóa lọc</a>
+        </form>
     </div>
-    <div class="card-body">
+</div>
 
-        @if (TempData["Message"] != null)
-        {
-            <div class="alert alert-warning">@TempData["Message"]</div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger">@TempData["Error"]</div>
-        }
-
+<div class="card shadow-sm">
+    <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover table-borderless align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Khách hàng</th>
-                        <th>Điểm sạc (ID)</th>
+                        <th class="ps-4">Khách hàng</th>
+                        <th>Điểm sạc</th>
                         <th>Thời gian đặt</th>
                         <th>Trạng thái</th>
-                        <th>Tổng tiền</th>
-                        <th style="width: 150px;">Hành động</th>
+                        @* <th>Tổng tiền</th> *@
+                        @* <th class="pe-4" style="width: 150px;">Hành động</th> *@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var session in Model.Sessions)
+                    @if (Model.Sessions.Count == 0)
                     {
                         <tr>
-                            <td>@session.UserFullName</td>
-                            <td><strong>@session.PointId</strong> (@session.PointPortType)</td>
-                            <td>@session.BookTime.ToString("g")</td>
-                            <td>
-                                @if (session.Status == "Booked")
-                                {
-                                    <span class="badge bg-secondary">Đã đặt</span>
-                                }
-                                else if (session.Status == "Charging")
-                                {
-                                    <span class="badge bg-primary">Đang sạc</span>
-                                }
-                                else if (session.Status == "Completed")
-                                {
-                                    <span class="badge bg-success">Hoàn thành</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning text-dark">@session.Status</span>
-                                }
-                            </td>
-                            <td>
-                                @if (session.TotalCost.HasValue)
-                                {
-                                    <strong class="text-success">@session.TotalCost.Value.ToString("N0") VND</strong>
-                                }
-                            </td>
-                            <td>
-                                @if (session.Status == "Completed")
-                                {
-                                    <a href="#" class="btn btn-success btn-sm">
-                                        <i class="fas fa-dollar-sign me-1"></i> Tính tiền
-                                    </a>
-                                }
+                            <td colspan="6" class="text-center p-5 text-muted">
+                                <i class="fas fa-search fa-2x mb-3"></i>
+                                <h5 class="mb-0">Không tìm thấy phiên sạc.</h5>
+                                <p>Hãy thử thay đổi bộ lọc hoặc kiểm tra lại sau.</p>
                             </td>
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var session in Model.Sessions)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-secondary text-white rounded-circle me-2"
+                                             style="width: 32px; height: 32px; line-height: 32px; text-align: center; font-weight: 600;">
+                                            @session.UserFullName.Substring(0, 1)
+                                        </div>
+                                        <span>@session.UserFullName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark">ID: @session.PointId</span>
+                                    (@session.PointPortType)
+                                </td>
+                                <td>
+                                    <i class="far fa-calendar-alt me-1 text-muted"></i>
+                                    @session.BookTime.ToString("g")
+                                </td>
+                                <td>
+                                    @if (session.Status == "Booked")
+                                    {
+                                        <span class="badge bg-secondary">Đã đặt</span>
+                                    }
+                                    else if (session.Status == "Charging")
+                                    {
+                                        <span class="badge bg-primary">Đang sạc</span>
+                                    }
+                                    else if (session.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">Hoàn thành</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@session.Status</span>
+                                    }
+                                </td>
+                                @* <td> *@
+                                @*     @if (session.TotalCost.HasValue) *@
+                                @*     { *@
+                                @*         <strong class="text-success">@session.TotalCost.Value.ToString("N0") VND</strong> *@
+                                @*     } *@
+                                @*     else *@
+                                @*     { *@
+                                @*         <span class="text-muted">---</span> *@
+                                @*     } *@
+                                @* </td> *@
+                                @* <td class="pe-4"> *@
+                                @*     @if (session.Status == "Completed") *@
+                                @*     { *@
+                                @*         <a href="#" class="btn btn-success btn-sm"> *@
+                                @*             <i class="fas fa-dollar-sign me-1"></i> Tính tiền *@
+                                @*         </a> *@
+                                @*     } *@
+                                @* </td> *@
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Gắn Select2 vào <select> có class 'select2-basic'
+            $('.select2-basic').select2({
+                theme: "bootstrap-5", // Dùng giao diện Bootstrap 5
+                placeholder: "Chọn trạng thái",
+                allowClear: true // Cho phép xóa lựa chọn
+            });
+        });
+    </script>
+}

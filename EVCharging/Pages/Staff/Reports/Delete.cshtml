@@ -1,40 +1,67 @@
-﻿@page
+﻿@page "{id:int}"
 @model EVCharging.Pages.Staff.Reports.DeleteModel
-
 @{
+    Layout = "_LayoutStaff"; // Đã liên kết
     ViewData["Title"] = "Xác nhận Xóa";
 }
+
+<!-- Nút quay lại -->
+<div class="mb-3">
+    <a asp-page="Index" class="btn btn-link text-secondary text-decoration-none px-0">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+    </a>
+</div>
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card shadow-sm border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0">@ViewData["Title"]</h4>
-            </div>
-            <div class="card-body">
-                <h5 class="text-danger">Bạn có chắc chắn muốn xóa báo cáo này?</h5>
+            <!--
+              Bỏ card-header bg-danger, thay bằng icon
+              để trông chuyên nghiệp hơn
+            -->
+            <div class="card-body p-4 text-center">
+
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+
+                <h3 class="text-danger fw-bold">Bạn có chắc chắn muốn xóa?</h3>
+                <p class="text-muted">Hành động này không thể hoàn tác. Báo cáo sự cố này sẽ bị xóa vĩnh viễn.</p>
                 <hr />
-                <dl class="row">
-                    <dt class="col-sm-3">Tiêu đề</dt>
-                    <dd class="col-sm-9">@Model.Report.Title</dd>
-                    
-                    <dt class="col-sm-3">Điểm sạc</dt>
-                    <dd class="col-sm-9">@Model.Report.PointName</dd>
 
-                    <dt class="col-sm-3">Người báo cáo</dt>
-                    <dd class="col-sm-9">@Model.Report.ReportedByUserName</dd>
+                <!-- Thông tin tóm tắt -->
+                <dl class="row text-start">
+                    <dt class="col-sm-4">Tiêu đề</dt>
+                    <dd class="col-sm-8">@Model.Report.Title</dd>
 
-                    <dt class="col-sm-3">Trạng thái</dt>
-                    <dd class="col-sm-9">@Model.Report.Status</dd>
+                    <dt class="col-sm-4">Điểm sạc</dt>
+                    <dd class="col-sm-8">@Model.Report.PointName</dd>
+
+                    <dt class="col-sm-4">Người báo cáo</dt>
+                    <dd class="col-sm-8">@Model.Report.ReportedByUserName</dd>
+
+                    <dt class="col-sm-4">Trạng thái</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.Report.Status == "Open")
+                        {
+                            <span class="badge bg-danger">Mới (Open)</span>
+                        }
+                        else if (Model.Report.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark">Đang xử lý</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Đã xử lý (Resolved)</span>
+                        }
+                    </dd>
                 </dl>
-                
-                <form method="post">
+
+                <form method="post" class="mt-4">
                     <input type="hidden" asp-for="Report.Id" />
-                    
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <a asp-page="Index" class="btn btn-secondary btn-lg">Hủy bỏ</a>
                         <button type="submit" class="btn btn-danger btn-lg">
-                            <i class="fas fa-trash-alt me-1"></i> Xóa
+                            <i class="fas fa-trash-alt me-2"></i> Vẫn Xóa
                         </button>
                     </div>
                 </form>
@@ -42,3 +69,8 @@
         </div>
     </div>
 </div>
+
+<!-- Trang này không cần script đặc biệt -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

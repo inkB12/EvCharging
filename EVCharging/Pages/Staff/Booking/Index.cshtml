@@ -1,102 +1,162 @@
-﻿@page
+﻿@page "/staff/booking"
 @model EVCharging.Pages.Staff.Booking.IndexModel
 @{
-    ViewData["Title"] = "Lịch đặt của trạm";
-    var nowUtc = DateTime.UtcNow;
+    Layout = "_LayoutStaff"; // <-- Đã liên kết
+    ViewData["Title"] = "Quản lý Booking";
 }
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Lịch đặt theo trạm (Staff)</h2>
-        <div>
-            @if (TempData["Info"] is string info)
-            {
-                <div class="alert alert-success py-2 px-3 mb-0">@info</div>
-            }
-            @if (TempData["Error"] is string err)
-            {
-                <div class="alert alert-danger  py-2 px-3 mb-0">@err</div>
-            }
-        </div>
+@if (TempData["Info"] is string info)
+{
+    <div class="alert alert-success">@info</div>
+}
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white border-0 py-3">
+        <h5 class="mb-0">
+            <i class="fas fa-filter text-primary me-2"></i>
+            Bộ lọc tìm kiếm
+        </h5>
     </div>
+    <div classs="card-body">
+        <form method="get" class="p-3">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small">Tìm theo từ khóa</label>
+                    <input class="form-control" type="text" name="Q" value="@Model.Q" placeholder="Tên trạm, địa chỉ, cổng..." />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small">Trạng thái</label>
+                    <select class="form-select select2-basic" name="Status" data-placeholder="Chọn trạng thái">
+                        <option value="">-- Tất cả --</option>
+                        <option value="ongoing" selected="@(Model.Status == "ongoing")">Đang diễn ra (Ongoing)</option>
+                        <option value="success" selected="@(Model.Status == "success")">Thành công (Success)</option>
+                        <option value="cancelled" selected="@(Model.Status == "cancelled")">Đã hủy (Cancelled)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small">Từ ngày</label>
+                    <input class="form-control" type="date" name="From" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small">Đến ngày</label>
+                    <input class="form-control" type="date" name="To" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button class="btn btn-primary flex-fill">
+                        <i class="fas fa-search me-1"></i> Lọc
+                    </button>
+                    <a class="btn btn-outline-secondary" href="@Url.Page(null)" title="Reset">
+                        <i class="fas fa-sync-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-    <form method="get" class="card p-3 mb-3 shadow-sm">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="form-label">Tìm kiếm</label>
-                <input class="form-control" type="text" name="Q" value="@Model.Q" placeholder="Tên trạm / địa chỉ / loại cổng" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Trạng thái</label>
-                <select class="form-select" name="Status">
-                    <option value="">-- Tất cả --</option>
-                    <option value="ongoing" selected="@(Model.Status == "ongoing")">ongoing</option>
-                    <option value="success" selected="@(Model.Status == "success")">success</option>
-                    <option value="cancelled" selected="@(Model.Status == "cancelled")">cancelled</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Từ ngày</label>
-                <input class="form-control" type="date" name="From" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Đến ngày</label>
-                <input class="form-control" type="date" name="To" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
-            </div>
-            <div class="col-md-2 d-flex gap-2">
-                <button class="btn btn-primary flex-fill">Lọc</button>
-                <a class="btn btn-outline-secondary" href="@Url.Page(null)">Reset</a>
-            </div>
-        </div>
-    </form>
 
-    <div class="card shadow-sm">
-        @if (Model.Items.Count == 0)
-        {
-            <div class="p-4 text-center text-muted">Không có booking nào.</div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-borderless align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Booking #</th>
+                        <th>Trạm sạc</th>
+                        <th>Cổng</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
                         <tr>
-                            <th>Booking #</th>
-                            <th>Trạm</th>
-                            <th>Địa chỉ</th>
-                            <th>Cổng</th>
-                            <th>Thời gian</th>
-                            <th>Trạng thái</th>
-                            <th class="text-muted">Giá</th>
-                            <th class="text-end">Hành động</th>
+                            <td colspan="6" class="text-center p-5 text-muted">
+                                <i class="fas fa-search fa-2x mb-3"></i>
+                                <h5 class="mb-0">Không tìm thấy lịch đặt nào.</h5>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
+                    }
+                    else
+                    {
                         @foreach (var x in Model.Items)
                         {
                             <tr>
-                                <td>@x.BookingId</td>
-                                <td class="fw-semibold">@x.StationName</td>
-                                <td class="text-muted">@x.StationLocation</td>
-                                <td>@x.PortType</td>
-                                <td>
-                                    @((x.StartTime?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")) ?? "-")
-                                    – @((x.EndTime?.ToLocalTime().ToString("HH:mm")) ?? "-")
+                                <td class="ps-4">
+                                    <strong class="text-dark">@x.BookingId</strong>
                                 </td>
-                                <td class="text-capitalize">@x.Status</td>
-                                <td class="text-muted">@x.Price.ToString("N0") ₫</td>
-                                <td class="text-end">
+                                <td>
+                                    <strong class="d-block">@x.StationName</strong>
+                                    <small class="text-muted">@x.StationLocation</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@x.PortType</span>
+                                    <small class="d-block text-muted mt-1">@x.Price.ToString("N0") ₫/kWh</small>
+                                </td>
+                                <td>
+                                    <i class="far fa-calendar-alt me-1 text-muted"></i>
+                                    @((x.StartTime?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")) ?? "-")
+                                    <br>
+                                    <i class="far fa-clock me-1 text-muted"></i>
+                                    @((x.EndTime?.ToLocalTime().ToString("HH:mm")) ?? "-")
+                                </td>
+                                <td>
+                                    @if (x.Status.Equals("success", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge bg-success-subtle text-success-emphasis">
+                                            <i class="fas fa-circle-check me-1"></i> Thành công
+                                        </span>
+                                    }
+                                    else if (x.Status.Equals("ongoing", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary-emphasis">
+                                            <i class="fas fa-bolt me-1"></i> Đang diễn ra
+                                        </span>
+                                    }
+                                    else if (x.Status.Equals("cancelled", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger-emphasis">
+                                            <i class="fas fa-circle-xmark me-1"></i> Đã hủy
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                                            @x.Status
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
                                     <a class="btn btn-sm btn-outline-primary"
                                        asp-page="/Staff/Booking/Detail" asp-route-id="@x.BookingId">
-                                        Xem
+                                        <i class="fas fa-eye me-1"></i> Xem
                                     </a>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
-        }
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Gắn Select2 vào <select> có class 'select2-basic'
+            $('.select2-basic').select2({
+                theme: "bootstrap-5",
+                placeholder: "Chọn trạng thái",
+                allowClear: true
+            });
+        });
+    </script>
+}

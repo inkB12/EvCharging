@@ -1,0 +1,87 @@
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Staff Panel</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <nav class="staff-sidebar">
+        <div class="sidebar-header">
+            <a asp-page="/Staff/Sessions/Index">
+                <i class="fas fa-bolt"></i>
+                EV Staff Panel
+            </a>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Staff/Sessions/Index">
+                    <i class="nav-icon fas fa-tasks"></i>
+                    Quản lý Phiên sạc
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Staff/ChargingPoints/Index">
+                    <i class="nav-icon fas fa-charging-station"></i>
+                    Điểm sạc của Trạm
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Staff/Reports/Index">
+                    <i class="nav-icon fas fa-flag"></i>
+                    Báo cáo Sự cố
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/Staff/Booking/Index">
+                    <i class="nav-icon fas fa-calendar-check"></i>
+                    Quản lý Booking
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="staff-main-content">
+
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="display-6 m-0">@ViewData["Title"]</h2>
+
+            <div class="d-flex align-items-center">
+                <span class="me-3">
+                    Xin chào, <strong>@Context.Session.GetString("User.FullName")</strong>
+                </span>
+                <a asp-page="/Auth/Logout" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Đăng xuất
+                </a>
+            </div>
+        </header>
+
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
