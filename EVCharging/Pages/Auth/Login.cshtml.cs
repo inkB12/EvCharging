@@ -33,6 +33,7 @@ namespace EVCharging.Pages.Auth
             HttpContext.Session.SetInt32("User.Id", user.Id);
             HttpContext.Session.SetString("User.Email", user.Email);
             HttpContext.Session.SetString("User.FullName", user.FullName ?? string.Empty);
+            string userRole = user.Role ?? "User";
             HttpContext.Session.SetString("User.Role", user.Role ?? "User");
             if (user.HomeStationId.HasValue)
             {
@@ -43,7 +44,23 @@ namespace EVCharging.Pages.Auth
                 HttpContext.Session.Remove("User.HomeStationId");
             }
 
-            return RedirectToPage("/Index");
+            // 1. Kiểm tra vai trò và điều hướng
+            if (userRole == "Staff")
+            {
+                // Nếu là Staff, chuyển đến trang Dashboard của Staff
+                // (Chúng ta dùng Sessions/Index làm trang chính của Staff)
+                return RedirectToPage("/Staff/Sessions/Index");
+            }
+            else if (userRole == "Admin")
+            {
+                // (Tùy chọn) Nếu bạn có trang Admin
+                return RedirectToPage("/Admin/Dashboard");
+            }
+            else
+            {
+                // Mặc định (vai trò "User"), chuyển đến trang chủ
+                return RedirectToPage("/Index");
+            }
         }
     }
 }

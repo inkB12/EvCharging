@@ -1,6 +1,5 @@
 ﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
-// XÓA: using EVCharging.DAL.Interfaces; // Không cần nữa
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,11 +9,10 @@ namespace EVCharging.Pages.Staff.ChargingPoints
     {
         private readonly IChargingPointService _pointService;
         private readonly IChargingStationService _stationService;
-        // XÓA: private readonly IUserRepository _userRepository;
 
         public IndexModel(
             IChargingPointService pointService,
-            IChargingStationService stationService) // <-- XÓA _userRepository
+            IChargingStationService stationService)
         {
             _pointService = pointService;
             _stationService = stationService;
@@ -23,9 +21,24 @@ namespace EVCharging.Pages.Staff.ChargingPoints
         public string StationName { get; set; } = "Không xác định";
         public List<ChargingPointDto> ChargingPoints { get; set; } = new List<ChargingPointDto>();
 
+        // --- THÊM MỚI: CÁC BIẾN CHO THẺ THỐNG KÊ ---
+        public int TotalPoints { get; set; }
+        public int AvailablePoints { get; set; }
+        public int ChargingPointsCount { get; set; }
+        public int FaultyPoints { get; set; }
+        // ------------------------------------------
+
         public async Task<IActionResult> OnGetAsync()
         {
-            // SỬA Ở ĐÂY: Lấy StationId trực tiếp từ Session
+            // 1. Kiểm tra quyền
+            var userRole = HttpContext.Session.GetString("User.Role");
+            if (userRole != "Staff")
+            {
+                TempData["Error"] = "Bạn không có quyền truy cập trang này.";
+                return RedirectToPage("/Index");
+            }
+
+            // 2. Lấy StationId từ Session (dùng key "User.HomeStationId")
             int? stationId = HttpContext.Session.GetInt32("User.HomeStationId");
 
             if (!stationId.HasValue)
@@ -34,14 +47,21 @@ namespace EVCharging.Pages.Staff.ChargingPoints
                 return Page();
             }
 
-            // Mọi thứ từ đây đều là async, sẽ không còn lỗi
-            var stationDto = await _stationService.GetByIdAsync(stationId.Value); // Sửa: GetByIdAsync
+            // 3. Lấy tên trạm
+            var stationDto = await _stationService.GetByIdAsync(stationId.Value);
             if (stationDto != null)
             {
                 StationName = stationDto.Name;
             }
 
+            // 4. Lấy danh sách điểm sạc
             ChargingPoints = await _pointService.GetByStationAsync(stationId.Value);
+
+            // 5. (THÊM MỚI) Tính toán các số liệu thống kê
+            TotalPoints = ChargingPoints.Count;
+            AvailablePoints = ChargingPoints.Count(p => p.Status == "Available");
+            ChargingPointsCount = ChargingPoints.Count(p => p.Status == "Charging");
+            FaultyPoints = ChargingPoints.Count(p => p.Status == "Faulty");
 
             return Page();
         }

@@ -1,49 +1,151 @@
 ﻿@page
 @model EVCharging.Pages.Map.IndexModel
 @{
-    ViewData["Title"] = "EV Stations Map";
+    ViewData["Title"] = "Tìm trạm sạc";
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
 <style>
-    .wrap {
-        display: grid;
-        gap: 12px;
-        margin: 16px;
+    /* === CẤU TRÚC LAYOUT MỚI === */
+
+    /* Chúng ta không dùng .wrap cũ nữa,
+          thay vào đó dùng container-fluid và row của Bootstrap
+          để kiểm soát layout tốt hơn.
+        */
+    .map-page-container {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
     }
 
+    /* === CỘT BÊN PHẢI (PANEL) === */
+    .panel-container {
+        /* Chúng ta sẽ cho panel bên phải "dính" lại (sticky)
+               khi cuộn trang, tạo cảm giác chuyên nghiệp.
+               "100px" là khoảng cách từ top, chừa chỗ cho navbar của bạn.
+            */
+        position: sticky;
+        top: 100px;
+        max-height: calc(100vh - 120px); /* Chiều cao tối đa, chừa navbar và lề */
+        overflow-y: auto; /* Tự động có thanh cuộn nếu nội dung dài */
+        padding-right: 10px; /* Thêm lề cho thanh cuộn */
+    }
+
+    /* === BOX HƯỚNG DẪN MỚI === */
+    .guide-box {
+        background-color: #f8f9fa; /* Màu nền xám rất nhạt */
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+
+        .guide-box .card-body {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .guide-box .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+            .guide-box .guide-step:last-child {
+                margin-bottom: 0;
+            }
+
+        .guide-box .step-number {
+            /* Vòng tròn đánh số */
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #e7f0ff; /* Nền xanh nhạt (giống _Layout) */
+            color: #0d6efd; /* Chữ xanh primary */
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .guide-box .step-content .title {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .guide-box .step-content .desc {
+            font-size: 0.9rem;
+            color: #495057;
+            margin-bottom: 0;
+        }
+
+
+    /* === THANH CÔNG CỤ (TRÁI) === */
     .toolbar {
         display: flex;
         gap: 8px;
         align-items: center;
-        padding: 10px;
-        border: 1px solid #eee;
+        padding: 1rem;
+        border: 1px solid #dee2e6;
         border-radius: 12px;
-        background: #fafafa
+        background: #ffffff;
+        margin-bottom: 1rem; /* Đổi từ 10px thành 1rem */
+        box-shadow: 0 4px 12px rgba(0,0,0,.04);
     }
 
         .toolbar input {
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            min-width: 240px
+            /* Dùng class form-control của Bootstrap */
+            flex-grow: 1; /* Cho ô input chiếm hết chỗ */
         }
 
-        .toolbar .btn {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 10px;
-            cursor: pointer
-        }
-
+    /* === BẢN ĐỒ (TRÁI) === */
     #map {
-        height: 540px;
+        /* Chiều cao chuyên nghiệp hơn, 650px.
+               Bạn có thể chỉnh thành 70vh (70% chiều cao màn hình) nếu muốn.
+            */
+        height: 650px;
         border-radius: 14px;
-        box-shadow: 0 8px 28px rgba(0,0,0,.08)
+        box-shadow: 0 8px 28px rgba(0,0,0,.08);
+        border: 1px solid #dee2e6;
     }
 
+    /* === PANEL ĐẶT LỊCH (PHẢI) === */
+    .panel {
+        display: grid;
+        gap: 1rem; /* Tăng khoảng cách */
+        padding: 1.5rem; /* Tăng padding */
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+
+        .panel h4 {
+            margin-bottom: 0; /* Bootstrap đã lo việc này */
+        }
+
+    /* Làm cho các nút "Kiểm tra", "Đặt lịch"
+           và các ô input/select đẹp hơn trên di động.
+        */
+    .form-actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+
+    #statusMsg {
+        flex-basis: 100%; /* Cho status message luôn xuống hàng */
+        margin-top: 5px;
+    }
+
+    .muted {
+        color: #6c757d; /* Dùng màu muted của Bootstrap */
+        font-size: 0.85rem; /* Chỉnh lại font size */
+    }
+
+    /* === ICON TRẠM SẠC (Giữ nguyên) === */
     .ev-marker {
         width: 28px;
         height: 28px;
@@ -62,73 +164,111 @@
             color: #fff;
             text-shadow: 0 1px 2px rgba(0,0,0,.35)
         }
-
-    .panel {
-        display: grid;
-        gap: 10px;
-        padding: 12px;
-        border: 1px solid #eee;
-        border-radius: 12px;
-        background: #fff
-    }
-
-        .panel h4 {
-            margin: 0
-        }
-
-    .row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap
-    }
-
-        .row .form-control, .row .form-select {
-            min-width: 180px
-        }
-
-    .muted {
-        color: #666;
-        font-size: 13px
-    }
 </style>
 
-<div class="wrap">
-    <h2>@ViewData["Title"]</h2>
+<div class="container-fluid map-page-container">
 
-    <div class="toolbar">
-        <input id="q" type="text" placeholder="Tìm trạm theo tên/địa chỉ..." />
-        <button id="fitAllBtn" class="btn">Fit all</button>
-        <span class="muted" style="margin-left:auto">Chọn trạm trên map hoặc panel bên dưới để đặt lịch</span>
-    </div>
+    <h2 class="mb-4">@ViewData["Title"]</h2>
 
-    <div id="map"></div>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="toolbar">
+                <i class="bi bi-search me-1 text-muted"></i>
+                <input id="q" type="text" class="form-control" placeholder="Tìm trạm theo tên hoặc địa chỉ..." />
+                <button id="fitAllBtn" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrows-fullscreen me-1"></i> Fit All
+                </button>
+            </div>
 
-    <div class="panel">
-        <h4>Đặt lịch sạc</h4>
-        <div class="row">
-            <select id="stationSelect" class="form-select">
-                <option value="">-- Chọn trạm sạc --</option>
-            </select>
-
-            <select id="portTypeSelect" class="form-select" disabled>
-                <option value="">-- Chọn loại cổng (Port Type) --</option>
-            </select>
-
-            <input id="dateInput" type="date" class="form-control" />
-            <select id="slotSelect" class="form-select">
-                <!-- 8h..22h, mỗi slot 1h -->
-            </select>
-
-            <button id="checkBtn" class="btn">Kiểm tra</button>
-            <button id="bookBtn" class="btn" disabled>Đặt lịch</button>
-            <span id="statusMsg" class="muted"></span>
+            <div id="map"></div>
         </div>
-        <div class="muted">Lưu ý: Mỗi slot là 1 tiếng (8:00–9:00, 9:00–10:00, ...). Hệ thống sẽ chọn 1 Charging Point rảnh theo Port Type.</div>
-    </div>
-</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+        <div class="col-lg-4">
+
+            <div class="panel-container">
+
+                <div class="card guide-box mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+                            Hướng dẫn đặt lịch
+                        </h5>
+                        <div class="guide-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="title">Tìm trạm sạc</div>
+                                <p class="desc">Sử dụng ô tìm kiếm hoặc nhấn vào trạm ⚡ trên bản đồ.</p>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="title">Chọn thông tin</div>
+                                <p class="desc">Điền loại cổng, ngày và khung giờ bạn muốn sạc.</p>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="title">Hoàn tất đặt lịch</div>
+                                <p class="desc">Nhấn "Kiểm tra" và sau đó "Đặt lịch" để xác nhận.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h4><i class="bi bi-calendar-plus me-2"></i> Đặt lịch sạc</h4>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <select id="stationSelect" class="form-select form-select-lg">
+                                <option value="">-- 1. Chọn trạm sạc --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <select id="portTypeSelect" class="form-select" disabled>
+                                <option value="">-- 2. Chọn loại cổng --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input id="dateInput" type="date" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <select id="slotSelect" class="form-select">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions-row">
+                        <button id="checkBtn" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Kiểm tra
+                        </button>
+                        <button id="bookBtn" class="btn btn-success" disabled>
+                            <i class="bi bi-lightning-charge-fill me-1"></i> Đặt lịch
+                        </button>
+                        <span id="statusMsg" class="muted"></span>
+                    </div>
+
+                    <div class="muted">
+                        Lưu ý: Mỗi slot là 1 tiếng (8:00–9:00, ...).
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div> <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <script>
+    /*
+      TOÀN BỘ JAVASCRIPT CỦA BẠN ĐƯỢC GIỮ NGUYÊN
+      Vì chúng ta chỉ thay đổi HTML/CSS,
+      và vẫn giữ nguyên tất cả 'id' của các element,
+      nên code logic của bạn sẽ chạy bình thường mà không cần sửa.
+    */
     const map = L.map('map', { zoomControl: true }).setView([16.0471, 108.2068], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
     const evIcon = L.divIcon({className:'', html:'<div class="ev-marker"><span>⚡</span></div>', iconSize:[28,28], iconAnchor:[14,14], popupAnchor:[0,-14]});
@@ -171,7 +311,7 @@
         })
     }
     function renderStationOptions(list){
-        stationSelect.innerHTML = `<option value="">-- Chọn trạm sạc --</option>`+
+        stationSelect.innerHTML = `<option value="">-- 1. Chọn trạm sạc --</option>`+
             list.map(s=>`<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.location||'')})</option>`).join('');
     }
     function fitAll(list){
@@ -208,7 +348,7 @@
           return;
         }
 
-        portTypeSelect.innerHTML = `<option value="">-- Chọn loại cổng --</option>` +
+        portTypeSelect.innerHTML = `<option value="">-- 2. Chọn loại cổng --</option>` +
           types.map(t => `<option value="${t}">${t}</option>`).join('');
         portTypeSelect.disabled = false;
       } catch (err) {

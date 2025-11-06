@@ -2,165 +2,249 @@
 @model EVCharging.Pages.Bookings.IndexModel
 @{
     ViewData["Title"] = "Lịch đặt của tôi";
+    // Tự động dùng _Layout.cshtml (header sáng)
     var nowUtc = DateTime.UtcNow;
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+<!-- XÓA: Link Bootstrap (đã có trong Layout) -->
+<!-- XÓA: Khối <style> (đã chuyển vào site.css) -->
+<!-- Bọc nội dung trong .container-narrow (class của _Layout.cshtml) -->
+<div class="container container-narrow my-4">
 
-<style>
-    .page-wrap {
-        padding: 24px
-    }
-
-    .card-rounded {
-        border-radius: 16px
-    }
-
-    .tag {
-        display: inline-block;
-        padding: .25rem .6rem;
-        border-radius: 999px;
-        font-size: .78rem;
-        border: 1px solid transparent
-    }
-
-    .tag-success {
-        background: #e7f7ee;
-        color: #207a43;
-        border-color: #cfeeda
-    }
-
-    .tag-ongoing {
-        background: #f5f5ff;
-        color: #3b45a6;
-        border-color: #e1e4ff
-    }
-
-    .tag-cancelled {
-        background: #fff1f0;
-        color: #a61b1b;
-        border-color: #ffd3cf
-    }
-</style>
-
-<div class="page-wrap container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="mb-0 fw-semibold">Lịch đặt của tôi</h2>
+    <!-- TIÊU ĐỀ VÀ THÔNG BÁO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold mb-0">Lịch sử Đặt sạc</h1>
         <div>
             @if (TempData["Info"] is string info)
             {
-                <div class="alert alert-success py-2 px-3 mb-0">@info</div>
+                <div class="alert alert-success py-2 px-3 mb-0 shadow-sm border-0">@info</div>
             }
             @if (TempData["Error"] is string err)
             {
-                <div class="alert alert-danger py-2 px-3 mb-0">@err</div>
+                <div class="alert alert-danger py-2 px-3 mb-0 shadow-sm border-0">@err</div>
             }
         </div>
     </div>
 
-    <!-- Filter bar -->
-    <form method="get" class="card card-rounded p-3 mb-4 shadow-sm">
-        <div class="row g-3 align-items-end">
-            <div class="col-sm-4 col-md-4">
-                <label class="form-label">Tìm kiếm</label>
-                <input class="form-control" type="text" name="Q" value="@Model.Q" placeholder="Tên trạm / địa chỉ / loại cổng" />
-            </div>
-            <div class="col-sm-3 col-md-2">
-                <label class="form-label">Trạng thái</label>
-                <select class="form-select" name="Status">
-                    <option value="">-- Tất cả --</option>
-                    <option value="ongoing" selected="@(Model.Status == "ongoing")">ongoing</option>
-                    <option value="success" selected="@(Model.Status == "success")">success</option>
-                    <option value="cancelled" selected="@(Model.Status == "cancelled")">cancelled</option>
-                </select>
-            </div>
-            <div class="col-sm-2 col-md-2">
-                <label class="form-label">Từ ngày</label>
-                <input class="form-control" type="date" name="From" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
-            </div>
-            <div class="col-sm-2 col-md-2">
-                <label class="form-label">Đến ngày</label>
-                <input class="form-control" type="date" name="To" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
-            </div>
-            <div class="col-sm-3 col-md-2 d-flex gap-2">
-                <button class="btn btn-primary flex-fill">Lọc</button>
-                <a class="btn btn-outline-secondary" href="@Url.Page(null)">Reset</a>
-            </div>
+    <!-- KHUNG LỌC (FILTER) - THIẾT KẾ LẠI -->
+    <div class="card shadow-sm mb-4" style="border-radius: 0.75rem;">
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-filter me-2 text-primary"></i>
+                Lọc lịch sử
+            </h5>
         </div>
-    </form>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3 align-items-end">
+                    <!-- Lọc 1: Tìm kiếm (Search) -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Tìm theo từ khóa</label>
+                        <input class="form-control" type="text" name="Q" value="@Model.Q" placeholder="Tên trạm, địa chỉ, cổng..." />
+                    </div>
+                    <!-- Lọc 2: Trạng thái (Combo Box) -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Trạng thái</label>
+                        <!-- Thêm class "select2-basic" để kích hoạt Combo Box -->
+                        <select class="form-select select2-basic" name="Status" data-placeholder="Chọn trạng thái">
+                            <option value="">-- Tất cả --</option>
+                            <option value="ongoing" selected="@(Model.Status == "ongoing")">Đang diễn ra</option>
+                            <option value="success" selected="@(Model.Status == "success")">Thành công</option>
+                            <option value="cancelled" selected="@(Model.Status == "cancelled")">Đã hủy</option>
+                        </select>
+                    </div>
+                    <!-- Lọc 3: Từ Ngày -->
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold small">Từ ngày</label>
+                        <input class="form-control" type="date" name="From" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <!-- Lọc 4: Đến Ngày -->
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold small">Đến ngày</label>
+                        <input class="form-control" type="date" name="To" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <!-- Nút bấm -->
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <!-- NÚT GRADIENT (từ site.css) -->
+                        <button class="btn btn-gradient-primary flex-fill">
+                            <i class="bi bi-search me-1"></i> Lọc
+                        </button>
+                        <a class="btn btn-outline-secondary" href="@Url.Page(null)" title="Reset">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <!-- Table -->
-    <div class="card card-rounded shadow-sm">
-        @if (Model.Items.Count == 0)
+    <!-- KẾT QUẢ (DANH SÁCH CARD THAY VÌ TABLE) -->
+    @if (Model.Items.Count == 0)
+    {
+        <!-- Trạng thái rỗng chuyên nghiệp -->
+        <div class="text-center p-5 text-muted">
+            <i class="bi bi-search fs-1 mb-3"></i>
+            <h5 class="mb-0">Không tìm thấy lịch đặt nào.</h5>
+            <p>Hãy thử thay đổi bộ lọc hoặc <a asp-page="/Map/Index">đặt lịch mới</a>.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var x in Model.Items)
         {
-            <div class="p-4 text-muted text-center">Không tìm thấy lịch đặt nào phù hợp.</div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Trạm</th>
-                            <th>Địa chỉ</th>
-                            <th>Cổng</th>
-                            <th>Thời gian</th>
-                            <th>Trạng thái</th>
-                            <th class="text-muted">Giá</th>
-                            <th class="text-end">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var x in Model.Items)
-                        {
-                            var status = (x.Status ?? "").ToLowerInvariant();
-                            var tagClass = status switch
-                            {
-                                "success" => "tag tag-success",
-                                "cancelled" => "tag tag-cancelled",
-                                _ => "tag tag-ongoing"
-                            };
-                            var canCancel =
-                            string.Equals(x.Status, "ongoing", StringComparison.OrdinalIgnoreCase)
-                            && x.StartTime.HasValue && x.StartTime.Value > nowUtc;
+            var status = (x.Status ?? "").ToLowerInvariant();
+            var canCancel =
+            string.Equals(x.Status, "ongoing", StringComparison.OrdinalIgnoreCase)
+            && x.StartTime.HasValue && x.StartTime.Value > nowUtc;
 
-                            <tr>
-                                <td class="fw-semibold">@x.StationName</td>
-                                <td class="text-muted">@x.StationLocation</td>
-                                <td>@x.PortType</td>
-                                <td>
-                                    @((x.StartTime?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")) ?? "-")
-                                    – @((x.EndTime?.ToLocalTime().ToString("HH:mm")) ?? "-")
-                                </td>
-                                <td><span class="@tagClass text-capitalize">@x.Status</span></td>
-                                <td class="text-muted">@x.Price.ToString("N0") ₫</td>
-                                <td class="text-end">
-                                    <a class="btn btn-sm btn-outline-primary me-1"
-                                       href="@Url.Page("/Booking/Detail", new { id = x.BookingId })">
-                                        Xem
-                                    </a>
+            <!-- MỖI BOOKING LÀ MỘT CARD (từ site.css) -->
+            <div class="card booking-card shadow-sm mb-3">
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <!-- CỘT TRÁI: THÔNG TIN (8) -->
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <!-- Tên trạm và Trạng thái -->
+                                <div>
+                                    <h4 class="fw-bold mb-1">@x.StationName</h4>
 
-
-                                    @if (canCancel)
+                                    <!-- BADGE (NHÃN) TRẠNG THÁI (dùng Bootstrap 5.3) -->
+                                    @if (status == "success")
                                     {
-                                        <form method="post" asp-page-handler="Cancel" class="d-inline">
-                                            <input type="hidden" name="id" value="@x.BookingId" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Bạn chắc muốn hủy lịch này?');">
-                                                Hủy
-                                            </button>
-                                        </form>
+                                        <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+                                            <i class="bi bi-check-circle me-1"></i> Thành công
+                                        </span>
+                                    }
+                                    else if (status == "cancelled")
+                                    {
+                                        <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">
+                                            <i class="bi bi-x-circle me-1"></i> Đã hủy
+                                        </span>
                                     }
                                     else
                                     {
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>Hủy</button>
+                                        <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
+                                            <i class="bi bi-clock me-1"></i> Đang diễn ra
+                                        </span>
                                     }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                </div>
+                                <!-- Giá tiền -->
+                                <span class="text-success fw-bold fs-5">@x.Price.ToString("N0") ₫/kWh</span>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Thông tin chi tiết (với icon) -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        <span>@x.StationLocation</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="bi bi-ev-station-fill"></i>
+                                        <span>Cổng <strong>@x.PortType</strong></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <i class="bi bi-calendar-check-fill"></i>
+                                        <span>@((x.StartTime?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")) ?? "-")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="bi bi-clock-fill"></i>
+                                        <span>@((x.EndTime?.ToLocalTime().ToString("HH:mm")) ?? "-")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CỘT PHẢI: NÚT BẤM (4) -->
+                        <div class="col-md-4 d-flex flex-column justify-content-center align-items-stretch gap-2 border-start-md">
+                            <!-- Nút Xem (Nổi bật) -->
+                            <a class="btn btn-primary"
+                               href="@Url.Page("/Booking/Detail", new { id = x.BookingId })">
+                                <i class="bi bi-eye me-1"></i> Xem Chi tiết
+                            </a>
+
+                            @if (canCancel)
+                            {
+                                <!-- Nút Hủy (Mở Modal) -->
+                                <button type="button" class="btn btn-outline-danger"
+                                        data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                        data-booking-id="@x.BookingId"
+                                        data-station-name="@x.StationName">
+                                    <i class="bi bi-x-lg me-1"></i> Hủy Lịch
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-secondary" disabled>
+                                    <i class="bi bi-x-lg me-1"></i> Hủy Lịch
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         }
+    }
+</div>
+
+<!-- MODAL XÁC NHẬN HỦY (Thay thế confirm()) -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <!-- SỬA: asp-route-* để giữ lại filter khi quay về -->
+            <form method="post" asp-page-handler="Cancel" asp-route-Q="@Model.Q" asp-route-Status="@Model.Status" asp-route-From="@Model.From" asp-route-To="@Model.To">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cancelModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Xác nhận Hủy Lịch
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy lịch đặt tại trạm:</p>
+                    <p class="text-danger fw-bold" id="cancelItemName"></p>
+                    <!-- Input ẩn để gửi ID booking -->
+                    <input type="hidden" name="id" id="cancelBookingId" />
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="submit" class="btn btn-danger">Đồng ý Hủy</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<!-- SCRIPT CHO MODAL VÀ SELECT2 -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <script>
+        $(document).ready(function() {
+            // 1. Kích hoạt Select2 (Combo Box)
+            $('.select2-basic').select2({
+                theme: "bootstrap-5",
+                placeholder: "Chọn trạng thái",
+                allowClear: true,
+                dropdownParent: $('.card-body form') // Fix lỗi select2 trong card
+            });
+
+            // 2. Script cho Modal Hủy lịch
+            var cancelModal = document.getElementById('cancelModal');
+            cancelModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var bookingId = button.getAttribute('data-booking-id');
+                var stationName = button.getAttribute('data-station-name');
+
+                cancelModal.querySelector('#cancelBookingId').value = bookingId;
+                cancelModal.querySelector('#cancelItemName').textContent = stationName;
+            });
+        });
+    </script>
+}

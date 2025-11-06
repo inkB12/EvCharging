@@ -2,8 +2,9 @@
 using EVCharging.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 namespace EVCharging.Pages.Staff.Sessions
+
 {
     public class IndexModel : PageModel
     {
@@ -15,6 +16,11 @@ namespace EVCharging.Pages.Staff.Sessions
             _sessionService = sessionService;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public string? StatusFilter { get; set; }
+
+        // THÊM MỚI: Dùng để hiển thị các lựa chọn trong Combo Box
+        public SelectList StatusOptions { get; set; }
         public List<ChargingSessionDto> Sessions { get; set; } = new List<ChargingSessionDto>();
 
         public async Task<IActionResult> OnGetAsync()
@@ -36,8 +42,22 @@ namespace EVCharging.Pages.Staff.Sessions
             }
 
             // 3. Gọi BLL Service
-            Sessions = await _sessionService.GetSessionsByStationAsync(stationId.Value);
 
+            var allSessions = await _sessionService.GetSessionsByStationAsync(stationId.Value);
+            // 4. (THÊM MỚI) Tạo danh sách cho Combo Box
+            // Lấy tất cả các trạng thái duy nhất từ danh sách
+            var statuses = allSessions.Select(s => s.Status).Distinct().ToList();
+            StatusOptions = new SelectList(statuses);
+
+            // 5. (THÊM MỚI) Áp dụng bộ lọc nếu có
+            if (!string.IsNullOrEmpty(StatusFilter))
+            {
+                Sessions = allSessions.Where(s => s.Status == StatusFilter).ToList();
+            }
+            else
+            {
+                Sessions = allSessions;
+            }
             return Page();
         }
     }
