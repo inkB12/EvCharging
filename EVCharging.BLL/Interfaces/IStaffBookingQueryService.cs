@@ -6,5 +6,6 @@ namespace EVCharging.BLL.Interfaces
     {
         Task<List<BookingListItemDTO>> GetByStationAsync(int stationId);
         Task<BookingDetailDTO?> GetDetailAsync(int? stationId, int bookingId);
+        Task Update(BookingDetailDTO dto);
     }
 }

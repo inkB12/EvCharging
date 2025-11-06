@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace EVCharging.Pages.Charge
 {
     [IgnoreAntiforgeryToken]
-    public class ApiModel : PageModel
+    public class ApiModel(IChargeRuntimeService svc) : PageModel
     {
-        private readonly IChargeRuntimeService _svc;
-        public ApiModel(IChargeRuntimeService svc) => _svc = svc;
+        private readonly IChargeRuntimeService _svc = svc;
+
 
         // GET /Charge/Api?handler=Session&sessionId=123
         public async Task<IActionResult> OnGetSession(int sessionId)
