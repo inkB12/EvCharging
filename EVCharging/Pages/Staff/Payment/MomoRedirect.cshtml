@@ -1,0 +1,27 @@
+﻿@page "/staff/payment/momo-redirect"
+@model EVCharging.Pages.Staff.Payment.MomoRedirectModel
+@{
+	ViewData["Title"] = "PaymentResult";
+}
+
+<div class="text-center mt-5">
+	<h2>Thông báo giao dịch</h2>
+	<hr />
+
+	@if (Model.ResultCode == 0)
+	{
+		<h3 class="mt-4 text-success">
+			<i class="fas fa-check-circle"></i>@Model.PaymentMessage
+		</h3>
+	}
+	else
+	{
+		<h3 class="mt-4 text-danger">
+			<i class="fas fa-times-circle"></i>@Model.PaymentMessage
+		</h3>
+	}
+
+	<p>Mã giao dịch: @Model.OrderId</p>
+
+	<a href="/" class="btn btn-primary mt-3">Quay về trang chủ</a>
+</div>

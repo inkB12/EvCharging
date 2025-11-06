@@ -1,5 +1,6 @@
 ﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
+using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
 
 namespace EVCharging.BLL.Services
@@ -78,7 +79,28 @@ namespace EVCharging.BLL.Services
                 });
             }
 
+            foreach (var t in b.Transactions)
+            {
+                var tDto = MapToDTO(t);
+                if (tDto != null) dto.Transactions.Add(tDto);
+            }
+
             return dto;
+        }
+
+        private TransactionDTO? MapToDTO(Transaction entity)
+        {
+            if (entity == null) return null;
+
+            return new TransactionDTO()
+            {
+                BookingId = entity.BookingId,
+                Datetime = entity.Datetime,
+                PaymentMethod = entity.PaymentMethod,
+                Status = entity.Status,
+                Id = entity.Id,
+                Total = entity.Total,
+            };
         }
     }
 }

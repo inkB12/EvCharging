@@ -14,6 +14,7 @@
         public decimal PointPricePerKwh { get; set; }
 
         // Thông tin Phiên sạc
+        public int BookingId { get; set; }
         public DateTime BookTime { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }

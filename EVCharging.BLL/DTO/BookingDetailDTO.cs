@@ -9,6 +9,7 @@
         public string Status { get; set; } = null!;
 
         public List<SessionItemDTO> Sessions { get; set; } = new();
+        public List<TransactionDTO> Transactions { get; set; } = new();
     }
 
     public class SessionItemDTO

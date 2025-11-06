@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-white"><strong>Charging Sessions</strong></div>
         <div class="card-body">
             @if (b.Sessions.Count == 0)
@@ -97,6 +97,56 @@
                                            href="@Url.Page("/Charge/Index", new { sessionId = s.SessionId })">
                                             Mở đồng hồ sạc
                                         </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* Transaction *@
+    <div class="card shadow-sm">
+        <div class="card-header bg-white"><strong>Transactions</strong></div>
+        <div class="card-body">
+            @if (b.Transactions.Count == 0)
+            {
+                <div class="text-muted">Chưa có giao dịch nào.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Ngày tạo</th>
+                                <th>Phương thức thanh toán</th>
+                                <th>Trạng thái</th>
+                                <th>Tổng tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in b.Transactions.OrderBy(x => x.Datetime))
+                            {
+                                <tr>
+                                    <td>@t.Id</td>
+                                    <td>
+                                        @(t.Datetime != default ? t.Datetime.ToLocalTime().ToString("dd/MM/yyyy HH:mm") : "-")
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">@t.PaymentMethod</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge text-bg-@(t.Status == "success" ? "success" : t.Status == "ongoing" ? "primary" : "secondary")">
+                                            @t.Status
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-semibold">@t.Total.ToString("N0") ₫</div>
                                     </td>
                                 </tr>
                             }

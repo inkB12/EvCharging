@@ -202,6 +202,18 @@
                                     <i class="bi bi-calendar2-check me-1"></i> History
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @Active("/driver/ChargingHabitsReport")" asp-page="/Driver/ChargingHabitsReport">
+                                    <i class="bi bi-graph-up-arrow me-1"></i> Thói quen
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @Active("/driver/MonthlyCostReport")" asp-page="/Driver/MonthlyCostReport">
+                                    <i class="bi bi-wallet me-1"></i> Chi tiêu
+                                </a>
+                            </li>
                             
                             <li class="nav-item">
                                 <a class="nav-link @Active("/account")" href="@Url.Content("~/Account/Profile")">

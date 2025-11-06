@@ -1,5 +1,6 @@
 ﻿using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
+using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
 
 namespace EVCharging.BLL.Services
@@ -10,6 +11,11 @@ namespace EVCharging.BLL.Services
         public ChargingSessionService(IChargingSessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
+        }
+
+        public async Task<ChargingSessionDto> GetByIdAsync(int id)
+        {
+            return Map(await _sessionRepository.GetByIdAsync(id));
         }
 
         public async Task<List<ChargingSessionDto>> GetSessionsByStationAsync(int stationId)
@@ -32,6 +38,23 @@ namespace EVCharging.BLL.Services
             }).OrderBy(s => s.Status == "Completed")
               .ThenByDescending(s => s.StartTime ?? s.BookTime)
               .ToList();
+        }
+
+        private ChargingSessionDto Map(ChargingSession session)
+        {
+            if (session == null) return null;
+
+            return new ChargingSessionDto
+            {
+
+                EndTime = session.EndTime,
+                EnergyConsumedKwh = session.EnergyConsumedKwh,
+                Id = session.Id,
+                PointId = session.PointId,
+                Status = session.Status,
+                StartTime = session.StartTime,
+                BookingId = session.Booking.Id,
+            };
         }
 
         //public async Task StartSessionAsync(int sessionId)

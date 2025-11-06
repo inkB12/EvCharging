@@ -18,6 +18,7 @@ namespace EVCharging.DAL.Services
         public async Task<List<Transaction>> GetByBookingAsync(int bookingId)
         {
             return await _context.Transactions
+                .Include(x => x.Booking)
                 .Where(t => t.BookingId == bookingId)
                 .ToListAsync();
         }
@@ -25,6 +26,7 @@ namespace EVCharging.DAL.Services
         public async Task<Transaction?> GetByIdAsync(int id)
         {
             return await _context.Transactions
+                .Include(x => x.Booking)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 

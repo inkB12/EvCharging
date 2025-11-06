@@ -16,7 +16,7 @@ namespace EVCharging.BLL.Services
             {
                 Datetime = DateTime.UtcNow,
                 PaymentMethod = transactionDTO.PaymentMethod,
-                Status = "ON_GOING",
+                Status = transactionDTO.PaymentMethod.Equals("CASH") ? "success" : "ongoing",
                 BookingId = transactionDTO.BookingId,
                 Total = await _pricingSerivice.CalculateSessionFee(transactionDTO.SessionId)
             };
@@ -41,6 +41,12 @@ namespace EVCharging.BLL.Services
             }
 
             entity.Status = transactionDTO.Status;
+
+            if (transactionDTO.Status.Equals("success"))
+            {
+                entity.Booking.Status = transactionDTO.Status;
+            }
+
             await _transactionRepo.UpdateAsync(entity);
 
             return MapToDTO(entity);

@@ -1,6 +1,5 @@
 using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
-using EVCharging.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -21,7 +20,7 @@ namespace EVCharging.Pages.Driver
 
         public async Task<IActionResult> OnGetAsync()
         {
-            int userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
+            int userId = HttpContext.Session.GetInt32("User.Id") ?? 0;
             if (userId == 0)
             {
                 return RedirectToPage("/Auth/Login");

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EVCharging.DAL.Services
 {
-    public class BookingRepository: IBookingRepository
+    public class BookingRepository : IBookingRepository
     {
         private readonly EvchargingContext _db;
         public BookingRepository(EvchargingContext db) => _db = db;
@@ -41,6 +41,7 @@ namespace EVCharging.DAL.Services
         public async Task<Booking?> GetByIdWithGraphAsync(int id)
         {
             return await _db.Bookings
+                .Include(b => b.Transactions)
                 .Include(b => b.ChargingSessions)
                     .ThenInclude(s => s.Point)
                         .ThenInclude(p => p.Station)
