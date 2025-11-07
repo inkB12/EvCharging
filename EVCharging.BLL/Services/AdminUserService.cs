@@ -1,4 +1,5 @@
-﻿using EVCharging.BLL.DTO;
+﻿using EVCharging.BLL.AdminDTOs;
+using EVCharging.BLL.DTO;
 using EVCharging.BLL.Interfaces;
 using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
@@ -12,93 +13,74 @@ namespace EVCharging.BLL.Services
 {
     public class AdminUserService : IAdminUserService
     {
-        private readonly IUserRepository _repo;
+        private readonly IAdminUserRepository _repository;
 
-        public AdminUserService(IUserRepository repo)
+        public AdminUserService(IAdminUserRepository repository)
         {
-            _repo = repo;
+            _repository = repository;
         }
 
-        public async Task<List<AdminUserDto>> GetAllAsync()
+        public async Task<List<AdminUserDTO>> GetAllAsync()
         {
-            var users = await _repo.GetAllUsersAsync();
-            return users.Select(u => new AdminUserDto
-            {
-                Id = u.Id,
-                Email = u.Email,
-                Phone = u.Phone,
-                FullName = u.FullName,
-                Role = u.Role,
-                Vehicle = u.Vehicle,
-                IsDeleted = u.IsDeleted,
-                ServicePlanId = u.ServicePlanId,
-                HomeStationId = u.HomeStationId
-            }).ToList();
+            var list = await _repository.GetAllAsync();
+            return list.Select(MapToDTO).ToList();
         }
 
-        public async Task<AdminUserDto?> GetByIdAsync(int id)
+        public async Task<AdminUserDTO?> GetByIdAsync(int id)
         {
-            var u = await _repo.GetByIdAsync(id);
-            if (u == null) return null;
-            return new AdminUserDto
+            var entity = await _repository.GetByIdAsync(id);
+            return entity == null ? null : MapToDTO(entity);
+        }
+
+        public async Task AddAsync(AdminUserDTO dto)
+        {
+            await _repository.AddAsync(MapToEntity(dto));
+        }
+
+        public async Task UpdateAsync(AdminUserDTO dto)
+        {
+            await _repository.UpdateAsync(MapToEntity(dto));
+        }
+
+        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+
+        public async Task<List<AdminUserDTO>> GetByRoleAsync(string role)
+        {
+            var list = await _repository.GetUsersByRoleAsync(role);
+            return list.Select(MapToDTO).ToList();
+        }
+
+        public async Task<bool> UpdateUserRoleAsync(int id, string newRole)
+        {
+            return await _repository.UpdateUserRoleAsync(id, newRole);
+        }
+
+        private AdminUserDTO MapToDTO(User e)
+        {
+            return new AdminUserDTO
             {
-                Id = u.Id,
-                Email = u.Email,
-                FullName = u.FullName,
-                Role = u.Role
+                Id = e.Id,
+                FullName = e.FullName,
+                Email = e.Email,
+                Phone = e.Phone,
+                Role = e.Role,
+                Vehicle = e.Vehicle,
+                ServicePlanName = e.ServicePlan?.Name,
+                HomeStationName = e.HomeStation?.Name
             };
         }
 
-        public async Task<int> CreateAsync(AdminUserDto dto)
+        private User MapToEntity(AdminUserDTO d)
         {
-            var entity = new User
+            return new User
             {
-                Email = dto.Email,
-                Phone = dto.Phone,
-                FullName = dto.FullName,
-                Role = dto.Role,
-                Vehicle = dto.Vehicle,
-                IsDeleted = false,
-                ServicePlanId = dto.ServicePlanId,
-                HomeStationId = dto.HomeStationId
+                Id = d.Id,
+                FullName = d.FullName ?? "",
+                Email = d.Email ?? "",
+                Phone = d.Phone ?? "",
+                Role = d.Role ?? "driver",
+                Vehicle = d.Vehicle ?? ""
             };
-            return await _repo.CreateAsync(entity);
-        }
-
-        public async Task UpdateAsync(AdminUserDto dto)
-        {
-            var entity = new User
-            {
-                Id = dto.Id,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                FullName = dto.FullName,
-                Role = dto.Role,
-                Vehicle = dto.Vehicle,
-                ServicePlanId = dto.ServicePlanId,
-                HomeStationId = dto.HomeStationId,
-                IsDeleted = dto.IsDeleted
-            };
-            await _repo.UpdateAsync(entity);
-        }
-
-        public async Task DeleteAsync(int id) => await _repo.DeleteAsync(id);
-
-        public async Task<List<AdminUserDto>> GetByRoleAsync(string role)
-        {
-            var users = await _repo.GetUsersByRoleAsync(role);
-            return users.Select(u => new AdminUserDto
-            {
-                Id = u.Id,
-                Email = u.Email,
-                FullName = u.FullName,
-                Role = u.Role
-            }).ToList();
-        }
-
-        public async Task<int> CountByRoleAsync(string role)
-        {
-            return await _repo.CountUsersByRoleAsync(role);
         }
     }
 }

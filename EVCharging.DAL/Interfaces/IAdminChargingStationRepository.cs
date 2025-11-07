@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace EVCharging.DAL.Interfaces
 {
-    public interface IAdminChargingStationRepository
-    {
         public interface IAdminChargingStationRepository
         {
             Task<List<ChargingStation>> GetAllAsync();
@@ -25,4 +23,4 @@ namespace EVCharging.DAL.Interfaces
         }
     }
 
-}
+
