@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EVCharging.Pages.Shared
 {
-    public class _LayoutAdminModel : PageModel
+    public class _AdminLayoutModel : PageModel
     {
         public void OnGet()
         {

@@ -1,0 +1,104 @@
+﻿@page
+@model EVCharging.Pages.Admin.IndexModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h3 class="mb-4">Bảng điều khiển tổng quan</h3>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Tổng số trạm sạc</h6>
+                        <h3>@Model.TotalStations</h3>
+                    </div>
+                    <i class="fa-solid fa-tower-broadcast fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Tổng điểm sạc</h6>
+                        <h3>@Model.TotalPoints</h3>
+                    </div>
+                    <i class="fa-solid fa-plug-circle-bolt fa-2x text-success"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Người dùng hoạt động</h6>
+                        <h3>@Model.TotalUsers</h3>
+                    </div>
+                    <i class="fa-solid fa-user fa-2x text-warning"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Gói dịch vụ hiện tại</h6>
+                        <h3>@Model.TotalPlans</h3>
+                    </div>
+                    <i class="fa-solid fa-bolt fa-2x text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card p-3">
+                <h5 class="card-title">Tình trạng trạm sạc</h5>
+                <canvas id="stationChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5 class="card-title">Thống kê người dùng</h5>
+                <canvas id="userChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx1 = document.getElementById('stationChart');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Online', 'Offline', 'Bảo trì'],
+                datasets: [{
+                    label: 'Số trạm',
+                    data: [@Model.OnlineStations, @Model.OfflineStations, @Model.MaintenanceStations],
+                    backgroundColor: ['#00b4d8','#f77f00','#d62828']
+                }]
+            }
+        });
+
+        const ctx2 = document.getElementById('userChart');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tài xế', 'Nhân viên', 'Quản trị'],
+                datasets: [{
+                    data: [@Model.DriverCount, @Model.StaffCount, @Model.AdminCount],
+                    backgroundColor: ['#4cc9f0','#f9c74f','#f94144']
+                }]
+            }
+        });
+    </script>
+}

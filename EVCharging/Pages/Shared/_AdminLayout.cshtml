@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EV Charging - Bảng điều khiển quản trị</title>
+
+    <!-- Bootstrap & Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ==================== Tổng thể ==================== */
+        body {
+            background-color: #0f172a; /* Nền chính */
+            color: #e2e8f0; /* Màu chữ sáng */
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ==================== Sidebar ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            z-index: 100;
+            padding-top: 1rem;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+            .sidebar-header h4 {
+                color: #38bdf8;
+                font-weight: 700;
+                margin-bottom: 0.25rem;
+            }
+
+            .sidebar-header small {
+                color: #94a3b8;
+            }
+
+        .nav-link {
+            color: #cbd5e1;
+            font-weight: 500;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 8px;
+            margin: 3px 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+            .nav-link i {
+                width: 22px;
+                margin-right: 10px;
+            }
+
+            .nav-link.active,
+            .nav-link:hover {
+                background-color: #334155;
+                color: #38bdf8;
+            }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 0;
+            border-top: 1px solid #334155;
+            text-align: center;
+        }
+
+            .sidebar-footer a {
+                color: #94a3b8;
+                transition: color 0.2s;
+            }
+
+                .sidebar-footer a:hover {
+                    color: #38bdf8;
+                }
+
+        /* ==================== Navbar ==================== */
+        .navbar {
+            margin-left: 250px;
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+            .navbar h5 {
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .navbar .nav-icons i {
+                margin-left: 20px;
+                cursor: pointer;
+                color: #94a3b8;
+                transition: color 0.2s;
+            }
+
+                .navbar .nav-icons i:hover {
+                    color: #38bdf8;
+                }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid #38bdf8;
+        }
+
+        /* ==================== Content ==================== */
+        .content {
+            margin-left: 250px;
+            padding: 25px;
+            background-color: #0f172a;
+            min-height: 100vh;
+        }
+
+        /* ==================== Card Style ==================== */
+        .card {
+            background-color: #1e293b;
+            border: none;
+            border-radius: 10px;
+            color: #f1f5f9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-3px);
+            }
+
+        .card-title {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        /* ==================== Footer ==================== */
+        footer {
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #334155;
+            font-size: 0.9rem;
+        }
+
+       
+    </style>
+</head>
+<body>
+
+    <!-- ========== Sidebar ========== -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fa-solid fa-charging-station"></i> EV Charging</h4>
+            <small>Bảng điều khiển quản trị</small>
+        </div>
+
+        <a asp-page="/Admin/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Index" ? "active" : "")">
+            <i class="fa-solid fa-house"></i> Trang chủ
+        </a>
+
+        <a asp-page="/Admin/AdminStationPage/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminStationPage") == true ? "active" : "")">
+            <i class="fa-solid fa-tower-broadcast"></i> Trạm & Điểm sạc
+        </a>
+
+        <a asp-page="/Admin/AdminUserPage/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminUserPage") == true ? "active" : "")">
+            <i class="fa-solid fa-users"></i> Người dùng & Quyền hạn
+        </a>
+
+        <a asp-page="/Admin/AdminServicePlanPage/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminServicePlanPage") == true ? "active" : "")">
+            <i class="fa-solid fa-bolt"></i> Gói dịch vụ & Khuyến mãi
+        </a>
+
+        <div class="sidebar-footer">
+            <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <!-- ========== Navbar ========== -->
+    <div class="navbar">
+        <h5>Bảng quản trị hệ thống EV Charging</h5>
+        <div class="nav-icons">
+            <i class="fa-regular fa-bell"></i>
+            <img src="https://ui-avatars.com/api/?name=Admin" alt="Avatar" class="avatar ms-3" />
+        </div>
+    </div>
+
+    <!-- ========== Content ========== -->
+    <main class="content">
+        @RenderBody()
+    </main>
+
+    <!-- ========== Footer ========== -->
+    <footer>
+        &copy; @DateTime.Now.Year EVCharging. Tất cả quyền được bảo lưu.
+    </footer>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
