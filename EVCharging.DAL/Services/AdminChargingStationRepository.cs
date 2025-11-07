@@ -32,12 +32,14 @@ namespace EVCharging.DAL.Services
 
         public async Task AddAsync(ChargingStation station)
         {
+            station.Status = NormalizeStatus(station.Status);
             _context.ChargingStations.Add(station);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(ChargingStation station)
         {
+            station.Status = NormalizeStatus(station.Status);
             _context.ChargingStations.Update(station);
             await _context.SaveChangesAsync();
         }
@@ -47,7 +49,9 @@ namespace EVCharging.DAL.Services
             var station = await _context.ChargingStations.FindAsync(id);
             if (station != null)
             {
-                _context.ChargingStations.Remove(station);
+                // ❗ Xóa mềm: chỉ đặt lại trạng thái về "empty" (trạm ngừng hoạt động)
+                station.Status = "empty";
+                _context.ChargingStations.Update(station);
                 await _context.SaveChangesAsync();
             }
         }
@@ -64,9 +68,33 @@ namespace EVCharging.DAL.Services
             var station = await _context.ChargingStations.FindAsync(id);
             if (station != null)
             {
-                station.Status = status;
+                station.Status = NormalizeStatus(status);
+                _context.ChargingStations.Update(station);
                 await _context.SaveChangesAsync();
             }
         }
+
+        /// <summary>
+        /// Chuẩn hóa giá trị Status để tương thích với constraint trong DB.
+        /// </summary>
+        private string NormalizeStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return "empty";
+
+            status = status.Trim().ToLower();
+
+            return status switch
+            {
+                "inuse" => "inuse",
+                "empty" => "empty",
+                // ánh xạ hợp lý để tránh lỗi CHECK constraint
+                "online" => "inuse",
+                "offline" => "empty",
+                "maintenance" => "empty",
+                _ => "empty"
+            };
+        }
+
     }
 }

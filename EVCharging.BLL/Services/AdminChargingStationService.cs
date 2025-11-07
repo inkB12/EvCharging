@@ -34,19 +34,27 @@ namespace EVCharging.BLL.Services
         public async Task AddAsync(AdminChargingStationDTO dto)
         {
             var entity = MapToEntity(dto);
+            entity.Status = NormalizeStatus(entity.Status);
             await _repository.AddAsync(entity);
         }
 
         public async Task UpdateAsync(AdminChargingStationDTO dto)
         {
             var entity = MapToEntity(dto);
+            entity.Status = NormalizeStatus(entity.Status);
             await _repository.UpdateAsync(entity);
         }
 
-        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(int id)
+        {
+            // Xóa mềm → chuyển về trạng thái "empty"
+            await _repository.DeleteAsync(id);
+        }
 
-        public async Task UpdateStatusAsync(int id, string status) =>
-            await _repository.UpdateStationStatusAsync(id, status);
+        public async Task UpdateStatusAsync(int id, string status)
+        {
+            await _repository.UpdateStationStatusAsync(id, NormalizeStatus(status));
+        }
 
         private AdminChargingStationDTO MapToDTO(ChargingStation e)
         {
@@ -56,7 +64,8 @@ namespace EVCharging.BLL.Services
                 Name = e.Name,
                 Location = e.Location,
                 Description = e.Description,
-                Status = e.Status,
+                // Map hiển thị cho giao diện tiếng Việt
+                Status = e.Status == "inuse" ? "online" : "offline",
                 Latitude = e.Latitude,
                 Longtitude = e.Longtitude,
                 ChargingPoints = e.ChargingPoints?.Select(p => new AdminChargingPointDTO
@@ -77,12 +86,33 @@ namespace EVCharging.BLL.Services
             return new ChargingStation
             {
                 Id = d.Id,
-                Name = d.Name ?? "",
-                Location = d.Location ?? "",
-                Description = d.Description ?? "",
-                Status = d.Status ?? "empty",
+                Name = d.Name?.Trim() ?? "",
+                Location = d.Location?.Trim() ?? "",
+                Description = d.Description?.Trim() ?? "",
+                Status = NormalizeStatus(d.Status),
                 Latitude = d.Latitude,
                 Longtitude = d.Longtitude
+            };
+        }
+
+        /// <summary>
+        /// Chuẩn hóa trạng thái tương thích constraint ('inuse', 'empty')
+        /// </summary>
+        private string NormalizeStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return "empty";
+
+            status = status.Trim().ToLower();
+
+            return status switch
+            {
+                "inuse" => "inuse",
+                "empty" => "empty",
+                "online" => "inuse",
+                "offline" => "empty",
+                "maintenance" => "empty",
+                _ => "empty"
             };
         }
     }
