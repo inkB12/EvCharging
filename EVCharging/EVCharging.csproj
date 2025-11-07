@@ -14,4 +14,8 @@
     <ProjectReference Include="..\EVCharging.BLL\EVCharging.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Admin\" />
+  </ItemGroup>
+
 </Project>
