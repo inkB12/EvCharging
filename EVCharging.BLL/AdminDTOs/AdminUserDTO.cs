@@ -16,5 +16,8 @@ namespace EVCharging.BLL.AdminDTOs
         public string? Vehicle { get; set; }
         public string? ServicePlanName { get; set; }
         public string? HomeStationName { get; set; }
+
+        public int? ServicePlanId { get; set; }
+        public int? HomeStationId { get; set; }
     }
 }

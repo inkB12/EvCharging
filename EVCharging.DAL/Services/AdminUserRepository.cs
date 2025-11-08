@@ -23,6 +23,8 @@ namespace EVCharging.DAL.Services
             return await _context.Users
                 .Include(u => u.ServicePlan)
                 .Include(u => u.HomeStation)
+                .Where(u => !u.IsDeleted)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -31,18 +33,28 @@ namespace EVCharging.DAL.Services
             return await _context.Users
                 .Include(u => u.ServicePlan)
                 .Include(u => u.HomeStation)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }
 
         public async Task AddAsync(User user)
         {
+            user.IsDeleted = false;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(User user)
         {
-            _context.Users.Update(user);
+            var existing = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id && !u.IsDeleted);
+            if (existing == null) return;
+
+            existing.FullName = user.FullName;
+            existing.Phone = user.Phone;
+            existing.Vehicle = user.Vehicle;
+            existing.Role = user.Role;
+            existing.ServicePlanId = user.ServicePlanId;
+            existing.HomeStationId = user.HomeStationId;
+
             await _context.SaveChangesAsync();
         }
 
@@ -51,7 +63,7 @@ namespace EVCharging.DAL.Services
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                user.IsDeleted = true; // xóa mềm
                 await _context.SaveChangesAsync();
             }
         }
@@ -59,13 +71,15 @@ namespace EVCharging.DAL.Services
         public async Task<List<User>> GetUsersByRoleAsync(string role)
         {
             return await _context.Users
-                .Where(u => u.Role == role)
+                .Where(u => u.Role == role && !u.IsDeleted)
+                .Include(u => u.ServicePlan)
+                .Include(u => u.HomeStation)
                 .ToListAsync();
         }
 
         public async Task<bool> UpdateUserRoleAsync(int id, string newRole)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
             if (user == null) return false;
 
             user.Role = newRole;

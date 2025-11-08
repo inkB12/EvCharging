@@ -34,15 +34,20 @@ namespace EVCharging.BLL.Services
 
         public async Task AddAsync(AdminServicePlanDTO dto)
         {
-            await _repository.AddAsync(MapToEntity(dto));
+            var entity = MapToEntity(dto);
+            await _repository.AddAsync(entity);
         }
 
         public async Task UpdateAsync(AdminServicePlanDTO dto)
         {
-            await _repository.UpdateAsync(MapToEntity(dto));
+            var entity = MapToEntity(dto);
+            await _repository.UpdateAsync(entity);
         }
 
-        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
+        }
 
         private AdminServicePlanDTO MapToDTO(ServicePlan e) => new()
         {
@@ -55,9 +60,10 @@ namespace EVCharging.BLL.Services
         private ServicePlan MapToEntity(AdminServicePlanDTO d) => new()
         {
             Id = d.Id,
-            Name = d.Name ?? "",
-            Description = d.Description ?? "",
+            Name = d.Name?.Trim() ?? string.Empty,
+            Description = d.Description?.Trim(),
             Price = d.Price
+            // IsDeleted không map từ DTO, để DAL quyết định (Add: false, Update: giữ nguyên)
         };
     }
 }

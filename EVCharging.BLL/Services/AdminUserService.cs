@@ -34,7 +34,13 @@ namespace EVCharging.BLL.Services
 
         public async Task AddAsync(AdminUserDTO dto)
         {
-            await _repository.AddAsync(MapToEntity(dto));
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new ArgumentException("Email is required.");
+
+            var entity = MapToEntity(dto);
+            entity.Password = BCrypt.Net.BCrypt.HashPassword(dto.Email); // tạm gán hash từ email hoặc random default
+            entity.Role ??= "driver";
+            await _repository.AddAsync(entity);
         }
 
         public async Task UpdateAsync(AdminUserDTO dto)
@@ -42,7 +48,10 @@ namespace EVCharging.BLL.Services
             await _repository.UpdateAsync(MapToEntity(dto));
         }
 
-        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
+        }
 
         public async Task<List<AdminUserDTO>> GetByRoleAsync(string role)
         {
@@ -65,6 +74,8 @@ namespace EVCharging.BLL.Services
                 Phone = e.Phone,
                 Role = e.Role,
                 Vehicle = e.Vehicle,
+                ServicePlanId = e.ServicePlanId,
+                HomeStationId = e.HomeStationId,
                 ServicePlanName = e.ServicePlan?.Name,
                 HomeStationName = e.HomeStation?.Name
             };
@@ -79,7 +90,11 @@ namespace EVCharging.BLL.Services
                 Email = d.Email ?? "",
                 Phone = d.Phone ?? "",
                 Role = d.Role ?? "driver",
-                Vehicle = d.Vehicle ?? ""
+                Vehicle = d.Vehicle ?? "",
+                // giữ lại nếu DTO có
+                ServicePlanId = d.ServicePlanId,
+                HomeStationId = d.HomeStationId,
+                IsDeleted = false
             };
         }
     }

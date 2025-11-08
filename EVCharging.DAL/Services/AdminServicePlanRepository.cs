@@ -20,32 +20,59 @@ namespace EVCharging.DAL.Services
 
         public async Task<List<ServicePlan>> GetAllAsync()
         {
-            return await _context.ServicePlans.ToListAsync();
+            // Chỉ lấy plan chưa bị xóa mềm
+            return await _context.ServicePlans
+                .Where(p => !p.IsDeleted)
+                .ToListAsync();
         }
 
         public async Task<ServicePlan?> GetByIdAsync(int id)
         {
-            return await _context.ServicePlans.FindAsync(id);
+            // Không dùng FindAsync vì nó không filter theo IsDeleted
+            return await _context.ServicePlans
+                .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
         }
 
         public async Task AddAsync(ServicePlan plan)
         {
+            // Đảm bảo luôn là chưa xóa
+            plan.IsDeleted = false;
+            plan.Name = plan.Name?.Trim() ?? string.Empty;
+            plan.Description = plan.Description?.Trim();
+
             _context.ServicePlans.Add(plan);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(ServicePlan plan)
         {
-            _context.ServicePlans.Update(plan);
+            // Load entity đang tồn tại để không đụng vào IsDeleted
+            var existing = await _context.ServicePlans
+                .FirstOrDefaultAsync(p => p.Id == plan.Id && !p.IsDeleted);
+
+            if (existing == null)
+            {
+                return; // hoặc throw exception tùy convention của bạn
+            }
+
+            existing.Name = plan.Name?.Trim() ?? string.Empty;
+            existing.Description = plan.Description?.Trim();
+            existing.Price = plan.Price;
+
+            // IsDeleted giữ nguyên
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var plan = await _context.ServicePlans.FindAsync(id);
+            var plan = await _context.ServicePlans
+                .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+
             if (plan != null)
             {
-                _context.ServicePlans.Remove(plan);
+                // ❗ XÓA MỀM: chỉ đánh dấu IsDeleted = true
+                plan.IsDeleted = true;
+                _context.ServicePlans.Update(plan);
                 await _context.SaveChangesAsync();
             }
         }

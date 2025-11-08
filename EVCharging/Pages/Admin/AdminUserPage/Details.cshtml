@@ -1,0 +1,42 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminUserPage.DetailsModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container-fluid col-md-7">
+    <h3 class="fw-bold text-light mb-4">
+        <i class="fa-solid fa-circle-info me-2 text-info"></i>Thông tin chi tiết người dùng
+    </h3>
+
+    <div class="card p-4">
+        <dl class="row">
+            <dt class="col-sm-3">Họ tên:</dt>
+            <dd class="col-sm-9">@Model.User.FullName</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@Model.User.Email</dd>
+
+            <dt class="col-sm-3">Điện thoại:</dt>
+            <dd class="col-sm-9">@Model.User.Phone</dd>
+
+            <dt class="col-sm-3">Quyền:</dt>
+            <dd class="col-sm-9">@Model.User.Role</dd>
+
+            <dt class="col-sm-3">Phương tiện:</dt>
+            <dd class="col-sm-9">@Model.User.Vehicle</dd>
+
+            <dt class="col-sm-3">Gói dịch vụ:</dt>
+            <dd class="col-sm-9">@Model.User.ServicePlanName</dd>
+
+            <dt class="col-sm-3">Trạm chính:</dt>
+            <dd class="col-sm-9">@Model.User.HomeStationName</dd>
+        </dl>
+
+        <a asp-page="Edit" asp-route-id="@Model.User.Id" class="btn btn-warning me-2">
+            <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa
+        </a>
+        <a asp-page="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
