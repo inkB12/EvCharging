@@ -1,0 +1,27 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminServicePlanPage.DetailsModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container">
+    <h3 class="fw-bold mb-4 text-light"><i class="fa-solid fa-circle-info text-info me-2"></i>Chi tiết Gói dịch vụ</h3>
+
+    <div class="card p-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tên gói:</dt>
+            <dd class="col-sm-9">@Model.Plan.Name</dd>
+
+            <dt class="col-sm-3">Giá:</dt>
+            <dd class="col-sm-9">@string.Format("{0:N0} VNĐ", Model.Plan.Price)</dd>
+
+            <dt class="col-sm-3">Mô tả:</dt>
+            <dd class="col-sm-9">@Model.Plan.Description</dd>
+        </dl>
+
+        <div class="text-end mt-3">
+            <a asp-page="Index" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+        </div>
+    </div>
+</div>

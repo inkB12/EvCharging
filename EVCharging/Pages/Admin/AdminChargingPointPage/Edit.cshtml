@@ -1,0 +1,63 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminChargingPointPage.EditModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container">
+    <h3 class="fw-bold mb-4 text-light"><i class="fa-solid fa-pen-to-square text-warning me-2"></i>Chỉnh sửa Điểm sạc</h3>
+
+    <div class="card p-4">
+        <form method="post">
+            <input type="hidden" asp-for="Point.Id" />
+
+            <div class="mb-3">
+                <label class="form-label">Trạm sạc</label>
+                <select asp-for="Point.StationId" class="form-select">
+                    @foreach (var s in Model.Stations)
+                    {
+                        <option value="@s.Id">@s.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Loại cổng</label>
+                <select asp-for="Point.PortType" class="form-select">
+                    <option value="AC">AC</option>
+                    <option value="CCS">CCS</option>
+                    <option value="CHAdeMO">CHAdeMO</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Công suất (kW)</label>
+                <input asp-for="Point.PowerLevelKw" type="number" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tốc độ sạc (kW)</label>
+                <input asp-for="Point.ChargingSpeedKw" type="number" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Giá (VNĐ)</label>
+                <input asp-for="Point.Price" type="number" step="1000" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Trạng thái</label>
+                <select asp-for="Point.Status" class="form-select">
+                    <option value="online">Online</option>
+                    <option value="offline">Offline</option>
+                </select>
+            </div>
+
+            <div class="text-end">
+                <a asp-page="Index" class="btn btn-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+                <button type="submit" class="btn btn-warning"><i class="fa-solid fa-save"></i> Cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>

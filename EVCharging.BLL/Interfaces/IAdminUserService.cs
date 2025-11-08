@@ -1,15 +1,16 @@
-﻿using EVCharging.BLL.DTO;
+﻿using EVCharging.BLL.AdminDTOs;
+using EVCharging.BLL.DTO;
 
 namespace EVCharging.BLL.Interfaces
 {
     public interface IAdminUserService
     {
-        Task<List<AdminUserDto>> GetAllAsync();
-        Task<AdminUserDto?> GetByIdAsync(int id);
-        Task<int> CreateAsync(AdminUserDto dto);
-        Task UpdateAsync(AdminUserDto dto);
+        Task<List<AdminUserDTO>> GetAllAsync();
+        Task<AdminUserDTO?> GetByIdAsync(int id);
+        Task AddAsync(AdminUserDTO dto);
+        Task UpdateAsync(AdminUserDTO dto);
         Task DeleteAsync(int id);
-        Task<List<AdminUserDto>> GetByRoleAsync(string role);
-        Task<int> CountByRoleAsync(string role);
+        Task<List<AdminUserDTO>> GetByRoleAsync(string role);
+        Task<bool> UpdateUserRoleAsync(int id, string newRole);
     }
 }
