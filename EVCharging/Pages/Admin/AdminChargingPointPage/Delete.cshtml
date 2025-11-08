@@ -1,0 +1,37 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminChargingPointPage.DeleteModel
+@{
+    Layout = "_AdminLayout";
+}
+<div class="container mt-4">
+    <h3 class="fw-bold mb-4 text-warning">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+        Ngừng hoạt động Điểm sạc
+    </h3>
+
+    <div class="card p-4 bg-dark border border-warning shadow-lg">
+        <div class="mb-3">
+            <h5 class="text-light">
+                Bạn có chắc chắn muốn tạm ngừng điểm sạc
+                <span class="text-warning fw-bold">"@Model.Point.PortType"</span> không?
+            </h5>
+            <p class="text-secondary">
+                Sau khi ngừng hoạt động, điểm sạc sẽ được đặt trạng thái <span class="badge bg-danger">Offline</span>
+                và không thể sử dụng để sạc xe.
+            </p>
+        </div>
+
+        <form method="post">
+            <input type="hidden" asp-for="Point.Id" />
+
+            <div class="text-end mt-4">
+                <a asp-page="Index" class="btn btn-outline-light me-2">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-warning text-dark fw-bold">
+                    <i class="fa-solid fa-power-off"></i> Đặt thành Offline
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

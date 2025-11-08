@@ -183,8 +183,16 @@
             <i class="fa-solid fa-house"></i> Trang chủ
         </a>
 
-        <a asp-page="/Admin/AdminStationPage/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminStationPage") == true ? "active" : "")">
-            <i class="fa-solid fa-tower-broadcast"></i> Trạm & Điểm sạc
+        <!-- Quản lý Trạm sạc -->
+        <a asp-page="/Admin/AdminStationPage/Index"
+           class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminStationPage") == true ? "active" : "")">
+            <i class="fa-solid fa-tower-broadcast"></i> Quản lý Trạm sạc
+        </a>
+
+        <!-- Quản lý Điểm sạc -->
+        <a asp-page="/Admin/AdminChargingPointPage/Index"
+           class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminChargingPointPage") == true ? "active" : "")">
+            <i class="fa-solid fa-plug-circle-bolt"></i> Quản lý Điểm sạc
         </a>
 
         <a asp-page="/Admin/AdminUserPage/Index" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminUserPage") == true ? "active" : "")">

@@ -41,7 +41,10 @@ namespace EVCharging.BLL.Services
             await _repository.UpdateAsync(MapToEntity(dto));
         }
 
-        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
+        }
 
         public async Task<List<AdminChargingPointDTO>> GetByStatusAsync(string status)
         {
@@ -60,8 +63,8 @@ namespace EVCharging.BLL.Services
             StationId = e.StationId,
             PortType = e.PortType,
             Status = e.Status,
-            PowerLevelKw = (decimal)e.PowerLevelKw,
-            ChargingSpeedKw = (decimal)e.ChargingSpeedKw,
+            PowerLevelKw = e.PowerLevelKw ?? 0,
+            ChargingSpeedKw = e.ChargingSpeedKw ?? 0,
             Price = e.Price
         };
 

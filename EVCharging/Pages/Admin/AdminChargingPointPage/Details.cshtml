@@ -1,0 +1,39 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminChargingPointPage.DetailsModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container">
+    <h3 class="fw-bold mb-4 text-light"><i class="fa-solid fa-circle-info text-info me-2"></i>Chi tiết Điểm sạc</h3>
+
+    <div class="card p-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Mã điểm:</dt>
+            <dd class="col-sm-9">@Model.Point.Id</dd>
+
+            <dt class="col-sm-3">Trạm sạc:</dt>
+            <dd class="col-sm-9">@Model.StationName</dd>
+
+            <dt class="col-sm-3">Loại cổng:</dt>
+            <dd class="col-sm-9">@Model.Point.PortType</dd>
+
+            <dt class="col-sm-3">Công suất (kW):</dt>
+            <dd class="col-sm-9">@Model.Point.PowerLevelKw</dd>
+
+            <dt class="col-sm-3">Tốc độ sạc (kW):</dt>
+            <dd class="col-sm-9">@Model.Point.ChargingSpeedKw</dd>
+
+            <dt class="col-sm-3">Giá:</dt>
+            <dd class="col-sm-9">@string.Format("{0:N0} VNĐ", Model.Point.Price)</dd>
+
+            <dt class="col-sm-3">Trạng thái:</dt>
+            <dd class="col-sm-9">@Model.Point.Status</dd>
+        </dl>
+
+        <div class="text-end mt-3">
+            <a asp-page="Index" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+        </div>
+    </div>
+</div>

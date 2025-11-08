@@ -1,0 +1,75 @@
+﻿@page
+@model EVCharging.Pages.Admin.AdminChargingPointPage.IndexModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-light"><i class="fa-solid fa-plug-circle-bolt text-info me-2"></i>Quản lý Điểm sạc</h3>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Thêm điểm sạc
+        </a>
+    </div>
+
+    <div class="card p-3">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead class="table-secondary text-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Trạm sạc</th>
+                    <th>Loại cổng</th>
+                    <th>Công suất (kW)</th>
+                    <th>Tốc độ sạc (kW)</th>
+                    <th>Giá (VNĐ)</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Points != null && Model.Points.Any())
+                {
+                    foreach (var p in Model.Points)
+                    {
+                        <tr>
+                            <td>@p.Id</td>
+                            <td>@p.StationName</td>
+                            <td>@p.PortType</td>
+                            <td>@p.PowerLevelKw</td>
+                            <td>@p.ChargingSpeedKw</td>
+                            <td>@string.Format("{0:N0}", p.Price)</td>
+                            <td>
+                                @if (p.Status == "online")
+                                {
+                                    <span class="badge bg-success">Online</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Offline</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-page="Details" asp-route-id="@p.Id" class="btn btn-outline-info btn-sm me-1">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </a>
+                                <a asp-page="Edit" asp-route-id="@p.Id" class="btn btn-outline-warning btn-sm me-1">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a asp-page="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa-solid fa-power-off"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-secondary">Chưa có điểm sạc nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
