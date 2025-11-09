@@ -77,7 +77,9 @@ namespace EVCharging.BLL.Services
                     PowerLevelKw = (decimal)p.PowerLevelKw,
                     ChargingSpeedKw = (decimal)p.ChargingSpeedKw,
                     Price = p.Price
-                }).ToList()
+                }).ToList(),
+                // ✅ Đếm sẵn số điểm sạc
+                PointCount = e.ChargingPoints?.Count ?? 0
             };
         }
 

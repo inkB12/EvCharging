@@ -4,101 +4,325 @@
     Layout = "_AdminLayout";
 }
 
-<div class="container-fluid">
-    <h3 class="mb-4">Bảng điều khiển tổng quan</h3>
+<div class="container-fluid py-4">
 
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6>Tổng số trạm sạc</h6>
-                        <h3>@Model.TotalStations</h3>
-                    </div>
-                    <i class="fa-solid fa-tower-broadcast fa-2x text-primary"></i>
+    <!-- ========== HEADER CARD ========== -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card p-4 bg-gradient-dark border-0 shadow text-light d-flex justify-content-between align-items-center flex-md-row flex-column">
+                <div>
+                    <h5 class="fw-bold mb-2">
+                        🎉 Chúc mừng hệ thống đang hoạt động ổn định!
+                    </h5>
+                    <p class="mb-0 text-secondary">
+                        Hiệu suất trạm sạc hiện đạt <span class="fw-semibold text-success">98%</span>. Hãy tiếp tục duy trì nhé ⚡
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6>Tổng điểm sạc</h6>
-                        <h3>@Model.TotalPoints</h3>
-                    </div>
-                    <i class="fa-solid fa-plug-circle-bolt fa-2x text-success"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6>Người dùng hoạt động</h6>
-                        <h3>@Model.TotalUsers</h3>
-                    </div>
-                    <i class="fa-solid fa-user fa-2x text-warning"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6>Gói dịch vụ hiện tại</h6>
-                        <h3>@Model.TotalPlans</h3>
-                    </div>
-                    <i class="fa-solid fa-bolt fa-2x text-danger"></i>
-                </div>
+                <img src="https://cdn-icons-png.flaticon.com/512/7656/7656133.png" alt="Congrats" width="80" class="mt-3 mt-md-0">
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-8">
-            <div class="card p-3">
-                <h5 class="card-title">Tình trạng trạm sạc</h5>
-                <canvas id="stationChart"></canvas>
+    <!-- ========== OVERVIEW CARDS ========== -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-dark text-light p-3 shadow border-0 rounded-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-secondary mb-1">Trạm sạc</h6>
+                        <h3 class="fw-bold">@Model.TotalStations</h3>
+                        <small class="text-success"><i class="fa-solid fa-arrow-up"></i> +15%</small>
+                    </div>
+                    <i class="fa-solid fa-tower-broadcast fa-2x text-info"></i>
+                </div>
+                <canvas id="miniStation" height="50"></canvas>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-3">
-                <h5 class="card-title">Thống kê người dùng</h5>
-                <canvas id="userChart"></canvas>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-dark text-light p-3 shadow border-0 rounded-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-secondary mb-1">Điểm sạc</h6>
+                        <h3 class="fw-bold">@Model.TotalPoints</h3>
+                        <small class="text-danger"><i class="fa-solid fa-arrow-down"></i> -8%</small>
+                    </div>
+                    <i class="fa-solid fa-plug-circle-bolt fa-2x text-warning"></i>
+                </div>
+                <canvas id="miniPoint" height="50"></canvas>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-dark text-light p-3 shadow border-0 rounded-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-secondary mb-1">Người dùng</h6>
+                        <h3 class="fw-bold">@Model.TotalUsers</h3>
+                        <small class="text-success"><i class="fa-solid fa-arrow-up"></i> +12%</small>
+                    </div>
+                    <i class="fa-solid fa-users fa-2x text-success"></i>
+                </div>
+                <canvas id="miniUser" height="50"></canvas>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-dark text-light p-3 shadow border-0 rounded-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-secondary mb-1">Báo cáo lỗi</h6>
+                        <h3 class="fw-bold">@Model.TotalFaultReports</h3>
+                        <small class="text-danger"><i class="fa-solid fa-arrow-up"></i> +5%</small>
+                    </div>
+                    <i class="fa-solid fa-triangle-exclamation fa-2x text-danger"></i>
+                </div>
+                <canvas id="miniFault" height="50"></canvas>
             </div>
         </div>
     </div>
+
+    <!-- ========== MAIN CHARTS ========== -->
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4">
+                <h6 class="text-info mb-3"><i class="fa-solid fa-users-gear me-2"></i>Phân bổ người dùng</h6>
+                <canvas id="userChart" height="180"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4">
+                <h6 class="text-warning mb-3"><i class="fa-solid fa-chart-column me-2"></i>Tình trạng trạm & điểm sạc</h6>
+                <canvas id="stationChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4">
+                <h6 class="text-success mb-3"><i class="fa-solid fa-bolt-lightning me-2"></i>Hoạt động phiên sạc theo tháng</h6>
+                <canvas id="sessionChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOP 5 SECTION ========== -->
+    <div class="row g-4 mt-4">
+        <!-- Top 5 trạm sạc -->
+        <div class="col-xl-4 col-md-12">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4 h-100">
+                <h6 class="text-info mb-3"><i class="fa-solid fa-tower-broadcast me-2"></i>Top 5 trạm sạc có nhiều điểm nhất</h6>
+                @if (Model.TopStations?.Any() == true)
+                {
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="small text-secondary">
+                            <tr>
+                                <th>Tên trạm</th>
+                                <th>Vị trí</th>
+                                <th class="text-end">Số điểm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.TopStations)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@s.Name</td>
+                                    <td>@s.Location</td>
+                                    <td class="text-end">@s.PointCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-secondary fst-italic mb-0">Chưa có dữ liệu trạm sạc.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Top 5 người dùng -->
+        <div class="col-xl-4 col-md-12">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4 h-100">
+                <h6 class="text-success mb-3"><i class="fa-solid fa-users me-2"></i>Top 5 khách hàng VIP (đăng ký gói dịch vụ)</h6>
+                @if (Model.TopUsers?.Any() == true)
+                {
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="small text-secondary">
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Gói</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var u in Model.TopUsers)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@u.FullName</td>
+                                    <td>@u.Email</td>
+                                    <td>@(u.ServicePlanName ?? "Chưa có")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-secondary fst-italic mb-0">Chưa có dữ liệu người dùng.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Top 5 gói dịch vụ -->
+        <div class="col-xl-4 col-md-12">
+            <div class="card bg-dark text-light p-4 shadow border-0 rounded-4 h-100">
+                <h6 class="text-warning mb-3"><i class="fa-solid fa-bolt me-2"></i>Top 5 gói dịch vụ phổ biến</h6>
+                @if (Model.TopPlans?.Any() == true)
+                {
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="small text-secondary">
+                            <tr>
+                                <th>Tên gói</th>
+                                <th>Giá (VNĐ)</th>
+                                <th class="text-end">Người dùng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.TopPlans)
+                            {
+                                var userCount = Model.TotalUsers > 0 ? @Model.TopUsers.Count(u => u.ServicePlanId == p.Id) : 0;
+                                <tr>
+                                    <td class="fw-semibold">@p.Name</td>
+                                    <td>@p.Price.ToString("N0")</td>
+                                    <td class="text-end">@userCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-secondary fst-italic mb-0">Chưa có dữ liệu gói dịch vụ.</p>
+                }
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script>
-        const ctx1 = document.getElementById('stationChart');
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: ['Online', 'Offline', 'Bảo trì'],
-                datasets: [{
-                    label: 'Số trạm',
-                    data: [@Model.OnlineStations, @Model.OfflineStations, @Model.MaintenanceStations],
-                    backgroundColor: ['#00b4d8','#f77f00','#d62828']
-                }]
-            }
-        });
+        Chart.register(ChartDataLabels);
 
-        const ctx2 = document.getElementById('userChart');
-        new Chart(ctx2, {
+        const chartColor = '#cbd5e1';
+
+        /* ========== USER PIE ========== */
+        new Chart(document.getElementById('userChart'), {
             type: 'doughnut',
             data: {
                 labels: ['Tài xế', 'Nhân viên', 'Quản trị'],
                 datasets: [{
                     data: [@Model.DriverCount, @Model.StaffCount, @Model.AdminCount],
-                    backgroundColor: ['#4cc9f0','#f9c74f','#f94144']
+                    backgroundColor: ['#00b4d8','#ffd166','#ef476f'],
+                    borderWidth: 0
                 }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: chartColor } },
+                    datalabels: {
+                        color: '#fff',
+                        font: { weight: 'bold' },
+                        formatter: (v, ctx) => (v / ctx.chart._metasets[0].total * 100).toFixed(1) + '%'
+                    }
+                }
             }
         });
+
+        /* ========== STATION BAR ========== */
+        new Chart(document.getElementById('stationChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Online', 'Offline', 'Bảo trì'],
+                datasets: [
+                    {
+                        label: 'Trạm sạc',
+                        data: [@Model.OnlineStations, @Model.OfflineStations, @Model.MaintenanceStations],
+                        backgroundColor: 'rgba(56,189,248,0.8)',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Điểm sạc',
+                        data: [@Model.TotalPoints - 5, 5, 0],
+                        backgroundColor: 'rgba(249,199,79,0.8)',
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { ticks: { color: chartColor }, grid: { display: false } },
+                    y: { ticks: { color: chartColor }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: {
+                    legend: { labels: { color: chartColor } },
+                    datalabels: {
+                        color: '#fff',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (v) => v
+                    }
+                }
+            }
+        });
+
+        /* ========== SESSION LINE ========== */
+        new Chart(document.getElementById('sessionChart'), {
+            type: 'line',
+            data: {
+                labels: ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'],
+                datasets: [{
+                    label: 'Phiên sạc thành công',
+                    data: [3,5,8,6,10,12,15,14,13,16,18,20],
+                    borderColor: '#06d6a0',
+                    backgroundColor: 'rgba(6,214,160,0.2)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                scales: {
+                    x: { ticks: { color: chartColor }, grid: { display: false } },
+                    y: { ticks: { color: chartColor }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: {
+                    legend: { labels: { color: chartColor } },
+                    datalabels: { display: false }
+                }
+            }
+        });
+
+        /* ========== MINI SPARKLINE CHARTS (cards) ========== */
+        const miniOpt = { plugins: { legend: false, datalabels: { display: false } },
+            scales: { x: { display: false }, y: { display: false } },
+            elements: { line: { borderWidth: 2, tension: 0.4 }, point: { radius: 0 } } };
+
+        const createMini = (id, color) => {
+            new Chart(document.getElementById(id), {
+                type: 'line',
+                data: { labels: [1,2,3,4,5,6], datasets: [{ data: [2,4,3,5,4,6], borderColor: color }] },
+                options: miniOpt
+            });
+        };
+        createMini("miniStation", "#38bdf8");
+        createMini("miniPoint", "#f9c74f");
+        createMini("miniUser", "#06d6a0");
+        createMini("miniFault", "#ef233c");
     </script>
 }

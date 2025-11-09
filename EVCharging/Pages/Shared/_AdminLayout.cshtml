@@ -203,6 +203,12 @@
             <i class="fa-solid fa-bolt"></i> Gói dịch vụ & Khuyến mãi
         </a>
 
+        <!-- Quản lý Lỗi & Báo cáo -->
+        <a asp-page="/Admin/AdminFaultReportPage/Index"
+           class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminFaultReportPage") == true ? "active" : "")">
+            <i class="fa-solid fa-triangle-exclamation"></i> Quản lý Lỗi & Báo cáo
+        </a>
+
         <div class="sidebar-footer">
             <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
         </div>
