@@ -1,0 +1,90 @@
+﻿@page
+@model EVCharging.Pages.Admin.AdminFaultReportPage.IndexModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-light">
+            <i class="fa-solid fa-triangle-exclamation me-2 text-warning"></i>Quản lý Lỗi & Báo cáo
+        </h3>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Thêm báo lỗi
+        </a>
+    </div>
+
+    <form method="get" class="mb-3 d-flex gap-2">
+        <select asp-for="StatusFilter" class="form-select w-auto">
+            <option value="">-- Tất cả trạng thái --</option>
+            <option value="open">Đang mở</option>
+            <option value="closed">Đã đóng</option>
+        </select>
+        <button type="submit" class="btn btn-info text-white"><i class="fa-solid fa-filter"></i> Lọc</button>
+    </form>
+
+    <div class="card p-3">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead class="table-secondary text-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tiêu đề</th>
+                    <th>Người báo</th>
+                    <th>Điểm sạc</th>
+                    <th>Trạm</th>
+                    <th>Mức độ</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.FaultReports != null && Model.FaultReports.Any())
+                {
+                    foreach (var f in Model.FaultReports)
+                    {
+                        <tr>
+                            <td>@f.Id</td>
+                            <td>@f.Title</td>
+                            <td>@(f.UserName ?? "-")</td>
+                            <td>@(f.PointPortType ?? "-")</td>
+                            <td>@(f.StationName ?? "-")</td>
+                            <td>
+                                <span class="badge bg-@(f.Severity >= 4 ? "danger" : f.Severity == 3 ? "warning text-dark" : "success")">
+                                    @f.Severity
+                                </span>
+                            </td>
+                            <td>
+                                @if (f.Status == "open")
+                                {
+                                    <span class="badge bg-warning text-dark">Open</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Closed</span>
+                                }
+                            </td>
+                            <td>@f.ReportTime.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-center">
+                                <a asp-page="Details" asp-route-id="@f.Id" class="btn btn-outline-info btn-sm me-1">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </a>
+                                <a asp-page="Edit" asp-route-id="@f.Id" class="btn btn-outline-warning btn-sm me-1">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a asp-page="Delete" asp-route-id="@f.Id" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="9" class="text-center text-secondary">Không có báo lỗi nào.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

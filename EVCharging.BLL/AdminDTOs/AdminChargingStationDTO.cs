@@ -17,5 +17,8 @@ namespace EVCharging.BLL.AdminDTOs
         public decimal Longtitude { get; set; }
 
         public List<AdminChargingPointDTO>? ChargingPoints { get; set; }
+
+        // 🆕 Thêm trường này để hiển thị số điểm sạc (đã tính trước)
+        public int PointCount { get; set; }
     }
 }
