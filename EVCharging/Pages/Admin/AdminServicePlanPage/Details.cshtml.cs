@@ -1,0 +1,27 @@
+using EVCharging.BLL.AdminDTOs;
+using EVCharging.BLL.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace EVCharging.Pages.Admin.AdminServicePlanPage
+{
+    public class DetailsModel : PageModel
+    {
+        private readonly IAdminServicePlanService _planService;
+        public AdminServicePlanDTO Plan { get; set; } = new();
+
+        public DetailsModel(IAdminServicePlanService planService)
+        {
+            _planService = planService;
+        }
+
+        public async Task<IActionResult> OnGetAsync(int id)
+        {
+            var plan = await _planService.GetByIdAsync(id);
+            if (plan == null) return RedirectToPage("Index");
+
+            Plan = plan;
+            return Page();
+        }
+    }
+}

@@ -1,0 +1,50 @@
+﻿@page
+@model EVCharging.Pages.Admin.AdminFaultReportPage.CreateModel
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="container-fluid col-md-8">
+    <h3 class="fw-bold text-light mb-4">
+        <i class="fa-solid fa-plus text-info me-2"></i>Thêm báo lỗi mới
+    </h3>
+
+    <div class="card p-4">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="FaultReport.Title" class="form-label">Tiêu đề</label>
+                <input asp-for="FaultReport.Title" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FaultReport.Description" class="form-label">Mô tả</label>
+                <textarea asp-for="FaultReport.Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FaultReport.UserId" class="form-label">Người báo</label>
+                <select asp-for="FaultReport.UserId" class="form-select" asp-items="Model.UserList">
+                    <option value="">-- Chọn người dùng --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FaultReport.PointId" class="form-label">Điểm sạc</label>
+                <select asp-for="FaultReport.PointId" class="form-select" asp-items="Model.PointList">
+                    <option value="">-- Chọn điểm sạc --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FaultReport.Severity" class="form-label">Mức độ nghiêm trọng</label>
+                <input asp-for="FaultReport.Severity" class="form-control" type="number" min="1" max="5" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i> Lưu
+            </button>
+            <a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
+        </form>
+    </div>
+</div>

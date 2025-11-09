@@ -1,0 +1,70 @@
+﻿@page "{id:int}"
+@model EVCharging.Pages.Admin.AdminStationPage.DeleteModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-4">
+    <h3 class="fw-bold mb-4 text-warning">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+        Tạm ngừng hoạt động trạm sạc
+    </h3>
+
+    <div class="card p-4 bg-dark border border-warning shadow-lg">
+        <div class="mb-3">
+            <h5 class="text-light">
+                Bạn có chắc chắn muốn tạm ngừng hoạt động của trạm
+                <span class="text-warning fw-bold">"@Model.Station.Name"</span> không?
+            </h5>
+            <p class="text-secondary">
+                Sau khi tạm ngừng, trạm này sẽ không bị xóa khỏi hệ thống,
+                nhưng sẽ được hiển thị với trạng thái <span class="badge bg-danger">Offline</span>.
+            </p>
+        </div>
+
+        <dl class="row small text-light mb-3">
+            <dt class="col-sm-3">Mã trạm:</dt>
+            <dd class="col-sm-9">@Model.Station.Id</dd>
+
+            <dt class="col-sm-3">Vị trí:</dt>
+            <dd class="col-sm-9">@Model.Station.Location</dd>
+
+            <dt class="col-sm-3">Trạng thái hiện tại:</dt>
+            <dd class="col-sm-9">
+                @if (Model.Station.Status == "online")
+                {
+                    <span class="badge bg-success">Online</span>
+                }
+                else if (Model.Station.Status == "offline")
+                {
+                    <span class="badge bg-danger">Offline</span>
+                }
+                else if (Model.Station.Status == "maintenance")
+                {
+                    <span class="badge bg-warning text-dark">Bảo trì</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Không xác định</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Mô tả:</dt>
+            <dd class="col-sm-9">@Model.Station.Description</dd>
+        </dl>
+
+        <form method="post">
+            <input type="hidden" asp-for="Station.Id" />
+
+            <div class="text-end mt-4">
+                <a asp-page="Index" class="btn btn-outline-light me-2">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+
+                <button type="submit" class="btn btn-warning text-dark fw-bold">
+                    <i class="fa-solid fa-power-off"></i> Đặt thành Offline
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

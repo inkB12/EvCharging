@@ -1,0 +1,63 @@
+﻿@page
+@model EVCharging.Pages.Admin.AdminUserPage.CreateModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid col-md-8">
+    <h3 class="fw-bold text-light mb-4">
+        <i class="fa-solid fa-user-plus me-2 text-info"></i>Thêm người dùng mới
+    </h3>
+
+    <div class="card p-4">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="User.FullName" class="form-label">Họ và tên</label>
+                <input asp-for="User.FullName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="User.Email" class="form-label">Email</label>
+                <input asp-for="User.Email" class="form-control" type="email" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="User.Phone" class="form-label">Điện thoại</label>
+                <input asp-for="User.Phone" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="User.Role" class="form-label">Quyền</label>
+                <select asp-for="User.Role" class="form-select">
+                    <option value="driver">Tài xế</option>
+                    <option value="staff">Nhân viên</option>
+                    <option value="admin">Quản trị viên</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="User.Vehicle" class="form-label">Phương tiện</label>
+                <input asp-for="User.Vehicle" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Gói dịch vụ</label>
+                <select asp-for="User.ServicePlanId" class="form-select" asp-items="Model.ServicePlanList">
+                    <option value="">-- Chưa chọn --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Trạm chính</label>
+                <select asp-for="User.HomeStationId" class="form-select" asp-items="Model.StationList">
+                    <option value="">-- Chưa chọn --</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu người dùng
+            </button>
+            <a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
+        </form>
+    </div>
+</div>

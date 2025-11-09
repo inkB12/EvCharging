@@ -52,6 +52,26 @@ namespace EVCharging
             builder.Services.AddScoped<IMomoService, MomoService>();
             builder.Services.AddScoped<IVNPayService, VNPayService>();
 
+
+            // Admin Repo
+            builder.Services.AddScoped<IAdminChargingStationRepository, AdminChargingStationRepository>();
+            builder.Services.AddScoped<IAdminChargingPointRepository, AdminChargingPointRepository>();
+            builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            builder.Services.AddScoped<IAdminServicePlanRepository, AdminServicePlanRepository>();
+            builder.Services.AddScoped<IAdminFaultReportRepository, AdminFaultReportRepository>();
+            builder.Services.AddScoped<IAdminChargingSessionRepository, AdminChargingSessionRepository>();
+            builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
+
+
+            // Admin Services
+            builder.Services.AddScoped<IAdminChargingStationService, AdminChargingStationService>();
+            builder.Services.AddScoped<IAdminChargingPointService, AdminChargingPointService>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+            builder.Services.AddScoped<IAdminServicePlanService, AdminServicePlanService>();
+            builder.Services.AddScoped<IAdminFaultReportService, AdminFaultReportService>();
+            builder.Services.AddScoped<IAdminChargingSessionService, AdminChargingSessionService>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
 
