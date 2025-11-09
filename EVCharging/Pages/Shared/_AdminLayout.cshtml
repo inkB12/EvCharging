@@ -209,6 +209,12 @@
             <i class="fa-solid fa-triangle-exclamation"></i> Quản lý Lỗi & Báo cáo
         </a>
 
+        <!-- Thống kê & Báo cáo -->
+        <a asp-page="/Admin/AdminReportPage/Index"
+           class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("AdminReportPage") == true ? "active" : "")">
+            <i class="fa-solid fa-chart-line"></i> Thống kê & Báo cáo
+        </a>
+
         <div class="sidebar-footer">
             <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
         </div>

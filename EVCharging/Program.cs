@@ -60,7 +60,8 @@ namespace EVCharging
             builder.Services.AddScoped<IAdminServicePlanRepository, AdminServicePlanRepository>();
             builder.Services.AddScoped<IAdminFaultReportRepository, AdminFaultReportRepository>();
             builder.Services.AddScoped<IAdminChargingSessionRepository, AdminChargingSessionRepository>();
-           
+            builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
+
 
             // Admin Services
             builder.Services.AddScoped<IAdminChargingStationService, AdminChargingStationService>();
@@ -69,6 +70,7 @@ namespace EVCharging
             builder.Services.AddScoped<IAdminServicePlanService, AdminServicePlanService>();
             builder.Services.AddScoped<IAdminFaultReportService, AdminFaultReportService>();
             builder.Services.AddScoped<IAdminChargingSessionService, AdminChargingSessionService>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
