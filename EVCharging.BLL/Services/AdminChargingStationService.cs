@@ -2,11 +2,6 @@
 using EVCharging.BLL.Interfaces;
 using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVCharging.BLL.Services
 {
@@ -31,11 +26,12 @@ namespace EVCharging.BLL.Services
             return entity == null ? null : MapToDTO(entity);
         }
 
-        public async Task AddAsync(AdminChargingStationDTO dto)
+        public async Task<AdminChargingStationDTO> AddAsync(AdminChargingStationDTO dto)
         {
             var entity = MapToEntity(dto);
             entity.Status = NormalizeStatus(entity.Status);
-            await _repository.AddAsync(entity);
+            entity = await _repository.AddAsync(entity);
+            return MapToDTO(entity);
         }
 
         public async Task UpdateAsync(AdminChargingStationDTO dto)

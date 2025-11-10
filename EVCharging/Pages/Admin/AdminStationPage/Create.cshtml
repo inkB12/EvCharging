@@ -1,44 +1,54 @@
 ﻿@page
 @model EVCharging.Pages.Admin.AdminStationPage.CreateModel
 @{
-    Layout = "_AdminLayout";
+	Layout = "_AdminLayout";
 }
 
 <div class="container">
-    <h3 class="fw-bold mb-4 text-light">
-        <i class="fa-solid fa-plus text-primary me-2"></i>Thêm trạm sạc mới
-    </h3>
+	<h3 class="fw-bold mb-4 text-light">
+		<i class="fa-solid fa-plus text-primary me-2"></i>Thêm trạm sạc mới
+	</h3>
 
-    <div class="card p-4">
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label">Tên trạm sạc</label>
-                <input asp-for="Station.Name" class="form-control" placeholder="Nhập tên trạm..." />
-            </div>
+	<div class="card p-4">
+		<form method="post">
+			<div class="mb-3">
+				<label class="form-label">Tên trạm sạc</label>
+				<input asp-for="Station.Name" class="form-control" placeholder="Nhập tên trạm..." />
+			</div>
 
-            <div class="mb-3">
-                <label class="form-label">Vị trí</label>
-                <input asp-for="Station.Location" class="form-control" placeholder="Nhập địa chỉ trạm..." />
-            </div>
+			<div class="mb-3">
+				<label class="form-label">Vị trí</label>
+				<input asp-for="Station.Location" class="form-control" placeholder="Nhập địa chỉ trạm..." />
+			</div>
 
-            <div class="mb-3">
-                <label class="form-label">Mô tả</label>
-                <textarea asp-for="Station.Description" class="form-control" rows="3" placeholder="Nhập mô tả..."></textarea>
-            </div>
+			<div class="mb-3">
+				<label class="form-label">Mô tả</label>
+				<textarea asp-for="Station.Description" class="form-control" rows="3" placeholder="Nhập mô tả..."></textarea>
+			</div>
 
-            <div class="mb-3">
-                <label class="form-label">Trạng thái</label>
-                <select asp-for="Station.Status" class="form-select">
-                    <option value="online">Online</option>
-                    <option value="offline">Offline</option>
-                    <option value="maintenance">Bảo trì</option>
-                </select>
-            </div>
+			<div class="mb-3">
+				<label class="form-label">Kinh độ</label>
+				<input asp-for="Station.Longtitude" class="form-control" rows="3" placeholder="Nhập kinh độ..."></input>
+			</div>
 
-            <div class="text-end">
-                <a asp-page="Index" class="btn btn-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Lưu</button>
-            </div>
-        </form>
-    </div>
+			<div class="mb-3">
+				<label class="form-label">Vĩ độ</label>
+				<input asp-for="Station.Latitude" class="form-control" rows="3" placeholder="Nhập vĩ độ..."></input>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Trạng thái</label>
+				<select asp-for="Station.Status" class="form-select">
+					<option value="online">Online</option>
+					<option value="offline">Offline</option>
+					<option value="maintenance">Bảo trì</option>
+				</select>
+			</div>
+
+			<div class="text-end">
+				<a asp-page="Index" class="btn btn-secondary me-2"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+				<button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Lưu</button>
+			</div>
+		</form>
+	</div>
 </div>

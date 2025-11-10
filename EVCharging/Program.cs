@@ -4,6 +4,7 @@ using EVCharging.BLL.Services;
 using EVCharging.DAL;
 using EVCharging.DAL.Interfaces;
 using EVCharging.DAL.Services;
+using EVCharging.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVCharging
@@ -88,6 +89,8 @@ namespace EVCharging
                 opt.Cookie.IsEssential = true;
             });
 
+            builder.Services.AddSignalR();
+
             // Add services to the container.
             builder.Services.AddRazorPages();
 
@@ -107,6 +110,8 @@ namespace EVCharging
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.MapHub<StationHub>("/stationHub");
 
             app.UseSession();
 

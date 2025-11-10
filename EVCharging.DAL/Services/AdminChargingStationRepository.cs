@@ -1,11 +1,6 @@
 ﻿using EVCharging.DAL.Entities;
 using EVCharging.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVCharging.DAL.Services
 {
@@ -30,11 +25,12 @@ namespace EVCharging.DAL.Services
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task AddAsync(ChargingStation station)
+        public async Task<ChargingStation> AddAsync(ChargingStation station)
         {
             station.Status = NormalizeStatus(station.Status);
-            _context.ChargingStations.Add(station);
+            var entity = _context.ChargingStations.Add(station);
             await _context.SaveChangesAsync();
+            return entity.Entity;
         }
 
         public async Task UpdateAsync(ChargingStation station)
