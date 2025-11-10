@@ -262,7 +262,60 @@
         </div>
     </div>
 </div> <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <script>
+    
+    // Thiết lập kết nối SignalR
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/stationHub")
+        .withAutomaticReconnect()
+        .build();
+
+    // Bắt đầu kết nối
+    connection.start().then(() => {
+        console.log("SignalR Connected to StationHub.");
+    }).catch(err => {
+        console.error("SignalR Connection Error: ", err.toString());
+    });
+
+        // Xử lý sự kiện khi có trạm sạc mới được tạo
+    connection.on("StationCreated", function (stationDto) {
+        console.log("StationCreated Signal Received:", stationDto);
+
+        // 1. CHUYỂN DỮ LIỆU ĐẾN ĐỊNH DẠNG CŨ CỦA JAVASCRIPT
+        const newStation = {
+            id: stationDto.id,
+            name: stationDto.name,
+            location: stationDto.location,
+            longtitude: stationDto.longtitude,
+            latitude: stationDto.latitude,
+        };
+
+        // 2. CẬP NHẬT MẢNG DỮ LIỆU GỐC
+        stationsRaw.push(newStation);
+
+        // 3. CẬP NHẬT BẢN ĐỒ VÀ DROPDOWN
+        // Thêm Marker vào LayerGroup
+        const m = L.marker([newStation.latitude, newStation.longtitude], {icon: evIcon})
+            .bindPopup(`<b>${escapeHtml(newStation.name)}</b><br/><span class="muted">${escapeHtml(newStation.location||'')}</span>`);
+        m.on('click', ()=>{
+            stationSelect.value = String(newStation.id);
+            loadPortTypes(newStation.id);
+        });
+        m.addTo(layerGroup);
+
+        // Thêm Option vào Dropdown
+        const newOption = document.createElement('option');
+        newOption.value = newStation.id;
+        newOption.textContent = `${escapeHtml(newStation.name)} (${escapeHtml(newStation.location||'')})`;
+        stationSelect.appendChild(newOption);
+
+        // Hiển thị thông báo nhỏ trên giao diện
+        statusMsg.textContent = `✅ Trạm sạc mới đã được thêm: ${newStation.name}`;
+        setTimeout(() => { statusMsg.textContent = ''; }, 5000);
+    });
+
+
     /*
       TOÀN BỘ JAVASCRIPT CỦA BẠN ĐƯỢC GIỮ NGUYÊN
       Vì chúng ta chỉ thay đổi HTML/CSS,

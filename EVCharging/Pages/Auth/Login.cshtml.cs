@@ -54,7 +54,7 @@ namespace EVCharging.Pages.Auth
             else if (userRole == "Admin")
             {
                 // (Tùy chọn) Nếu bạn có trang Admin
-                return RedirectToPage("/Admin/Dashboard");
+                return RedirectToPage("/Admin/Index");
             }
             else
             {
