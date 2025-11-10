@@ -1,476 +1,525 @@
 ﻿@page
 @model EVCharging.Pages.Charge.IndexModel
 @{
-	ViewData["Title"] = "EV Charging – Đồng hồ sạc";
+    ViewData["Title"] = "EV Charging – Đồng hồ sạc";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
 <style>
-	:root {
-		--bg: #0b1020;
-		--card: #11172b;
-		--track: #1f2a44;
-		--accent: #18e07f;
-		--accent2: #39c2ff;
-		--text: #eaf2ff;
-		--muted: #9bb0d0;
-	}
+    :root {
+        --bg: #0b1020;
+        --card: #11172b;
+        --track: #1f2a44;
+        --accent: #18e07f;
+        --accent2: #39c2ff;
+        --text: #eaf2ff;
+        --muted: #9bb0d0;
+    }
 
-	body {
-		background: var(--bg);
-		color: var(--text);
-	}
+    body {
+        background: var(--bg);
+        color: var(--text);
+    }
 
-	.wrap {
-		max-width: 980px;
-		margin: 28px auto;
-		padding: 12px;
-	}
+    .wrap {
+        max-width: 980px;
+        margin: 28px auto;
+        padding: 12px;
+    }
 
-	.panel {
-		background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card);
-		border: 1px solid #263453;
-		border-radius: 18px;
-		padding: 24px;
-		box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
-	}
+    .panel {
+        background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card);
+        border: 1px solid #263453;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+    }
 
-	.title {
-		font-size: 20px;
-		font-weight: 700;
-		margin-bottom: 10px;
-	}
+    .title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
 
-	.grid {
-		display: grid;
-		grid-template-columns: 360px 1fr;
-		gap: 24px;
-		align-items: center;
-	}
+    .grid {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 24px;
+        align-items: center;
+    }
 
-	.mini {
-		color: var(--muted);
-		font-size: 13px;
-	}
+    .mini {
+        color: var(--muted);
+        font-size: 13px;
+    }
 
-	.circle-wrap {
-		width: 320px;
-		height: 320px;
-		display: grid;
-		place-items: center;
-		position: relative;
-		margin: 0 auto;
-	}
+    .circle-wrap {
+        width: 320px;
+        height: 320px;
+        display: grid;
+        place-items: center;
+        position: relative;
+        margin: 0 auto;
+    }
 
-	.ring {
-		filter: drop-shadow(0 0 12px rgba(24,224,127,.35)) drop-shadow(0 0 30px rgba(57,194,255,.14));
-	}
+    .ring {
+        filter: drop-shadow(0 0 12px rgba(24,224,127,.35)) drop-shadow(0 0 30px rgba(57,194,255,.14));
+    }
 
-	.center-info {
-		position: absolute;
-		inset: 0;
-		display: grid;
-		place-items: center;
-		text-align: center;
-	}
+    .center-info {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+    }
 
-	.percent {
-		font-size: 42px;
-		font-weight: 800;
-		text-shadow: 0 0 18px rgba(24,224,127,.45);
-	}
+    .percent {
+        font-size: 42px;
+        font-weight: 800;
+        text-shadow: 0 0 18px rgba(24,224,127,.45);
+    }
 
-	.stats {
-		display: grid;
-		grid-template-columns: repeat(3,1fr);
-		gap: 10px;
-		margin-top: 16px;
-	}
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 10px;
+        margin-top: 16px;
+    }
 
-	.stat {
-		background: #0e152a;
-		border: 1px solid #223259;
-		border-radius: 12px;
-		padding: 12px;
-		text-align: center;
-	}
+    .stat {
+        background: #0e152a;
+        border: 1px solid #223259;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+    }
 
-		.stat .label {
-			color: var(--muted);
-			font-size: 12px;
-			margin-bottom: 4px;
-		}
+        .stat .label {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
 
-		.stat .val {
-			font-weight: 800;
-			font-size: 18px;
-		}
+        .stat .val {
+            font-weight: 800;
+            font-size: 18px;
+        }
 
-	.rowx {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
+    .rowx {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-	.btn-ghost {
-		background: #0f162b;
-		color: var(--text);
-		border: 1px solid #28385f;
-	}
+    .btn-ghost {
+        background: #0f162b;
+        color: var(--text);
+        border: 1px solid #28385f;
+    }
 
-	.btn-start {
-		background: linear-gradient(135deg, var(--accent), #6bffa9);
-		border: 0;
-	}
+    .btn-start {
+        background: linear-gradient(135deg, var(--accent), #6bffa9);
+        border: 0;
+    }
 
-	.btn-stop {
-		background: linear-gradient(135deg, #ff5577, #ff9970);
-		border: 0;
-	}
+    .btn-stop {
+        background: linear-gradient(135deg, #ff5577, #ff9970);
+        border: 0;
+    }
 
-	.form-chip {
-		background: #0f162b;
-		border: 1px solid #28385f;
-		border-radius: 12px;
-		padding: 12px;
-	}
+    .form-chip {
+        background: #0f162b;
+        border: 1px solid #28385f;
+        border-radius: 12px;
+        padding: 12px;
+    }
 </style>
 
 <div class="wrap">
-	<div class="d-flex align-items-center justify-content-between mb-3">
-		<a class="btn btn-light border" asp-page="/Staff/Booking/Index">← Quay lại</a>
-		<div class="mini"><b>SessionId:</b> @Model.SessionId</div>
-	</div>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <a class="btn btn-light border" asp-page="/Staff/Booking/Index">← Quay lại</a>
+        <div class="mini"><b>SessionId:</b> @Model.SessionId</div>
+    </div>
 
-	<div class="panel">
-		<div class="title">EV Charging – Đồng hồ sạc</div>
-		<div class="mini mb-2">
-			<div><b>Trạm:</b> @(Model.StationName ?? "-") — @(Model.StationLocation ?? "-")</div>
-			<div>
-				<b>Port:</b> @(Model.PortType ?? "-"),
-				<b>PowerLevel (kWh):</b> @(Model.PowerLevelKW?.ToString() ?? "-"),
-				<b>ChargingSpeed:</b> @(Model.ChargingSpeedKW?.ToString() ?? "-")
-			</div>
-			<div id="modeLine" class="mt-1"></div>
-		</div>
+    <div class="panel">
+        <div class="title">EV Charging – Đồng hồ sạc</div>
+        <div class="mini mb-2">
+            <div><b>Trạm:</b> @(Model.StationName ?? "-") — @(Model.StationLocation ?? "-")</div>
+            <div>
+                <b>Port:</b> @(Model.PortType ?? "-"),
+                <b>PowerLevel (kWh, từ điểm sạc – chỉ để tham khảo):</b> @(Model.PowerLevelKW?.ToString() ?? "-"),
+                <b>ChargingSpeed:</b> @(Model.ChargingSpeedKW?.ToString() ?? "-")
+            </div>
+            <div id="modeLine" class="mt-1"></div>
+        </div>
 
-		<div class="grid">
-			<!-- Đồng hồ -->
-			<div>
-				<div class="circle-wrap">
-					<svg class="ring" width="320" height="320" viewBox="0 0 320 320">
-						<defs>
-							<linearGradient id="g1" x1="0" x2="1">
-								<stop offset="0%" stop-color="#18e07f" /><stop offset="100%" stop-color="#39c2ff" />
-							</linearGradient>
-						</defs>
-						<circle cx="160" cy="160" r="128" stroke="var(--track)" stroke-width="24" fill="none" />
-						<circle id="arc" cx="160" cy="160" r="128" stroke="url(#g1)" stroke-width="24" fill="none"
-								stroke-linecap="round" stroke-dasharray="804.25" stroke-dashoffset="804.25"
-								transform="rotate(-90 160 160)" />
-						<circle cx="160" cy="160" r="98" stroke="#0f162b" stroke-width="8" fill="#0b1124" />
-					</svg>
-					<div class="center-info">
-						<div class="percent" id="percent">0%</div>
-						<div class="mini" id="timeText">00:00:00</div>
-					</div>
-				</div>
-				<div class="stats">
-					<div class="stat"><div class="label">Bắt đầu</div><div class="val" id="startAt">-</div></div>
-					<div class="stat"><div class="label">Kết thúc</div><div class="val" id="endAt">-</div></div>
-					<div class="stat"><div class="label">Energy (kWh)</div><div class="val" id="energyVal">0.000</div></div>
-				</div>
-			</div>
+        <div class="grid">
+            <!-- Đồng hồ -->
+            <div>
+                <div class="circle-wrap">
+                    <svg class="ring" width="320" height="320" viewBox="0 0 320 320">
+                        <defs>
+                            <linearGradient id="g1" x1="0" x2="1">
+                                <stop offset="0%" stop-color="#18e07f" /><stop offset="100%" stop-color="#39c2ff" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="160" cy="160" r="128" stroke="var(--track)" stroke-width="24" fill="none" />
+                        <circle id="arc" cx="160" cy="160" r="128" stroke="url(#g1)" stroke-width="24" fill="none"
+                                stroke-linecap="round" stroke-dasharray="804.25" stroke-dashoffset="804.25"
+                                transform="rotate(-90 160 160)" />
+                        <circle cx="160" cy="160" r="98" stroke="#0f162b" stroke-width="8" fill="#0b1124" />
+                    </svg>
+                    <div class="center-info">
+                        <div class="percent" id="percent">0%</div>
+                        <div class="mini" id="timeText">00:00:00</div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat"><div class="label">Bắt đầu</div><div class="val" id="startAt">-</div></div>
+                    <div class="stat"><div class="label">Kết thúc</div><div class="val" id="endAt">-</div></div>
+                    <div class="stat"><div class="label">Energy (kWh)</div><div class="val" id="energyVal">0.000</div></div>
+                </div>
+            </div>
 
-			<!-- Form & nút điều khiển -->
-			<div>
-				<div class="form-chip mb-3">
-					<div class="row g-2 align-items-end">
-						<div class="col-6">
-							<label class="form-label mini">SOC ban đầu (%)</label>
-							<input id="socInput" type="number" class="form-control"
-								   min="0" max="100" step="1" value="20" />
-							<div class="mini mt-1">Không lưu DB, chỉ ảnh hưởng hiển thị vòng tròn.</div>
-						</div>
+            <!-- Form & nút điều khiển -->
+            <div>
+                <div class="form-chip mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-6">
+                            <label class="form-label mini">SOC ban đầu (%)</label>
+                            <input id="socInput" type="number" class="form-control"
+                                   min="0" max="100" step="1" value="20" />
+                            <div class="mini mt-1"></div>
+                        </div>
 
-						<div class="col-6">
-							<label class="form-label mini">Tổng pin (kWh)</label>
-							<div class="input-group">
-								<input id="capInput" type="number" class="form-control"
-									   min="1" step="1" value="@(Model.PowerLevelKW ?? 50)"
-									   @(Model.PowerLevelKW.HasValue && Model.PowerLevelKW.Value > 0 ? "readonly" : "") />
-								<span class="input-group-text">kWh</span>
-							</div>
-							<div class="mini mt-1">
-								@(Model.PowerLevelKW.HasValue && Model.PowerLevelKW.Value > 0
-																? "Đang dùng PowerLevel từ server (cố định cho UI)."
-																: "Server chưa có PowerLevel → bạn có thể nhập tay (chỉ hiển thị).")
-							</div>
-						</div>
-					</div>
-				</div>
+                        <div class="col-6">
+                            <label class="form-label mini">Tổng pin xe (kWh)</label>
+                            <div class="input-group">
+                                <input id="capInput" type="number" class="form-control"
+                                       min="1" step="1" value="50" />
+                                <span class="input-group-text">kWh</span>
+                            </div>
+                            <div class="mini mt-1">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="rowx">
-					<button id="btnStart" class="btn btn-start px-4 py-2 fw-bold">Start</button>
-					<button id="btnStop" class="btn btn-stop  px-4 py-2 fw-bold" disabled>Stop</button>
-					<button id="btnReset" class="btn btn-ghost px-4 py-2 fw-bold">Reset UI</button>
-				</div>
-				<div class="mini mt-2">
-					Start = set <code>StartTime=UtcNow</code>, Stop = set <code>EndTime=UtcNow</code> &amp; lưu
-					<code>EnergyConsumedKwh</code> trên server. <b>% pin</b> trên vòng tròn chỉ là hiển thị (theo SOC nhập + kWh sạc), không lưu DB.
-				</div>
+                <div class="rowx">
+                    <button id="btnStart" class="btn btn-start px-4 py-2 fw-bold">Start</button>
+                    <button id="btnStop" class="btn btn-stop  px-4 py-2 fw-bold" disabled>Stop</button>
+                    <button id="btnReset" class="btn btn-ghost px-4 py-2 fw-bold">Reset UI</button>
+                </div>
+                <div class="mini mt-2">
+                    
+                </div>
 
-				@* Payment Form *@
-				<form method="post">
-					<h5>Thanh toán</h5>
-					<div class="mb-3">
-						<input asp-for="Transaction.SessionId" value="@Model.SessionId" class="form-control" type="hidden" />
+                @* Payment Form *@
+                <form method="post" class="mt-4">
+                    <h5>Thanh toán</h5>
+                    <div class="mb-3">
+                        <input asp-for="Transaction.SessionId" value="@Model.SessionId" class="form-control" type="hidden" />
 
-						<label class="form-label">Payment Method</label>
-						<select class="form-select" asp-for="Transaction.PaymentMethod">
-							<option value="CASH" selected="@(Model.Transaction.PaymentMethod == "CASH")">CASH</option>
-							<option value="MOMO" selected="@(Model.Transaction.PaymentMethod == "MOMO")">MOMO</option>
-							<option value="VNPAY" selected="@(Model.Transaction.PaymentMethod == "VNPAY")">VNPAY</option>
-						</select>
-					</div>
-					<button type="submit" class="btn btn-primary">Thanh toán</button>
-				</form>
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" asp-for="Transaction.PaymentMethod">
+                            <option value="CASH" selected="@(Model.Transaction.PaymentMethod == "CASH")">CASH</option>
+                            <option value="MOMO" selected="@(Model.Transaction.PaymentMethod == "MOMO")">MOMO</option>
+                            <option value="VNPAY" selected="@(Model.Transaction.PaymentMethod == "VNPAY")">VNPAY</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Thanh toán</button>
+                </form>
 
-
-
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-	<script>
-		// ====== Params từ server
-		const sessionId        = @Model.SessionId;
-		const powerLevelKw     = @(Model.PowerLevelKW ?? 0);     // kWh target/full from server
-		const chargingSpeedVal = @(Model.ChargingSpeedKW ?? 0);  // AC: phút để đầy; ngược lại: kW
-		const portType         = "@(Model.PortType ?? "")";
+    <script>
+        // ====== Params từ server
+        const sessionId        = @Model.SessionId;
+        const powerLevelKwFromStation = @(Model.PowerLevelKW ?? 0);   // kWh mục tiêu của điểm sạc
+        const chargingSpeedVal = @(Model.ChargingSpeedKW ?? 0);       // AC: phút để đầy; ngược lại: kW
+        const portType         = "@(Model.PortType ?? "")";
 
-		// ====== UI refs
-		const arc       = document.getElementById('arc');
-		const percentEl = document.getElementById('percent');
-		const timeText  = document.getElementById('timeText');
-		const startAtEl = document.getElementById('startAt');
-		const endAtEl   = document.getElementById('endAt');
-		const energyEl  = document.getElementById('energyVal');
-		const btnStart  = document.getElementById('btnStart');
-		const btnStop   = document.getElementById('btnStop');
-		const btnReset  = document.getElementById('btnReset');
-		const modeLine  = document.getElementById('modeLine');
+        // ====== UI refs
+        const arc       = document.getElementById('arc');
+        const percentEl = document.getElementById('percent');
+        const timeText  = document.getElementById('timeText');
+        const startAtEl = document.getElementById('startAt');
+        const endAtEl   = document.getElementById('endAt');
+        const energyEl  = document.getElementById('energyVal');
+        const btnStart  = document.getElementById('btnStart');
+        const btnStop   = document.getElementById('btnStop');
+        const btnReset  = document.getElementById('btnReset');
+        const modeLine  = document.getElementById('modeLine');
 
-		const socInput  = document.getElementById('socInput');
-		const capInput  = document.getElementById('capInput');
+        const socInput  = document.getElementById('socInput');
+        const capInput  = document.getElementById('capInput');
 
-		const CIRCUM      = 2*Math.PI*128; // 804.25
-		const ONE_HOUR_MS = 3600*1000;
-		const ONE_MIN_MS  = 60*1000;
+        const CIRCUM      = 2*Math.PI*128; // 804.25
+        const ONE_HOUR_MS = 3600*1000;
+        const ONE_MIN_MS  = 60*1000;
 
-		// ====== Parse từ server
-		function parseServerTime(s) {
-			if (!s) return null;
-			if (typeof s !== 'string') return new Date(s);
-			if (/[zZ]|[+\-]\d{2}:\d{2}$/.test(s)) return new Date(s); // đã có Z/offset
-			return new Date(s.replace(' ', 'T')); // local
-		}
+        // ====== Parse từ server
+        function parseServerTime(s) {
+            if (!s) return null;
+            if (typeof s !== 'string') return new Date(s);
+            if (/[zZ]|[+\-]\d{2}:\d{2}$/.test(s)) return new Date(s); // đã có Z/offset
+            return new Date(s.replace(' ', 'T')); // local
+        }
 
-		function toLocalVN(isoOrDate) {
-			if (!isoOrDate) return '-';
-			const d = (isoOrDate instanceof Date) ? isoOrDate : new Date(isoOrDate);
-			if (isNaN(d)) return '-';
-			return d.toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
-		}
+        function toLocalVN(isoOrDate) {
+            if (!isoOrDate) return '-';
+            const d = (isoOrDate instanceof Date) ? isoOrDate : new Date(isoOrDate);
+            if (isNaN(d)) return '-';
+            return d.toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+        }
 
-		// ====== Heuristic mode (KHỚP server)
-		const speedIsMinutes = (() => {
-			if (chargingSpeedVal <= 0) return false;
-			if ((portType || '').toUpperCase() === 'AC' &&
-				powerLevelKw > 0 && chargingSpeedVal >= 5 && chargingSpeedVal <= 600) return true;
-			return false;
-		})();
-		modeLine.innerHTML = `<b>Mode:</b> ${speedIsMinutes ? 'Minutes-to-full' : 'kW (power)'} — chargingSpeed=${chargingSpeedVal}, powerLevel=${powerLevelKw}`;
+        // ====== Heuristic mode (KHỚP SERVER): AC + powerLevel>0 + speed in [5..600] => minutes-to-full; ngược lại: kW
+        const speedIsMinutes = (() => {
+            if (chargingSpeedVal <= 0) return false;
+            const isAC = (portType || '').toUpperCase() === 'AC';
+            const hasTarget = powerLevelKwFromStation > 0; // phải có mục tiêu kWh
+            const inRange = chargingSpeedVal >= 5 && chargingSpeedVal <= 600;
+            return isAC && hasTarget && inRange;
+        })();
+        modeLine.innerHTML = `<b>Mode:</b> ${speedIsMinutes ? 'Minutes-to-full' : 'kW (power)'} — chargingSpeed=${chargingSpeedVal}, powerLevel(from station)=${powerLevelKwFromStation}`;
 
-		// ====== State
-		let tickTimer = null;
-		let startUtc  = null;
-		let endUtc    = null;
-		let energyLocked = 0;  // kWh từ server khi đã Stop
-		let running = false;
+        // ====== State
+        let tickTimer = null;
+        let startUtc  = null;
+        let endUtc    = null;
+        let energyLocked = 0;      // kWh đã chốt server (sau Stop)
+        let displayEnergy = 0;     // kWh hiển thị mượt
+        let running = false;
 
-		// ====== Helpers
-		const fmtHms = (ms) => {
-		  if (!ms || ms < 0) ms = 0;
-		  const s  = Math.floor(ms/1000);
-		  const hh = String(Math.floor(s/3600)).padStart(2,'0');
-		  const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
-		  const ss = String(s%60).padStart(2,'0');
-		  return `${hh}:${mm}:${ss}`;
-		};
+        // Smoothing tick timing
+        let lastTickTs = null;     // ms
 
-		function getTotalCapacityKwh(){
-			const fromServer = Number(powerLevelKw || 0);
-			if (fromServer > 0) return fromServer;       // set cứng theo server
-			const fromInput  = Number(capInput.value || 0);
-			return fromInput > 0 ? fromInput : 50;       // fallback demo
-		}
+        // ====== Helpers
+        const fmtHms = (ms) => {
+          if (!ms || ms < 0) ms = 0;
+          const s  = Math.floor(ms/1000);
+          const hh = String(Math.floor(s/3600)).padStart(2,'0');
+          const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
+          const ss = String(s%60).padStart(2,'0');
+          return `${hh}:${mm}:${ss}`;
+        };
 
-		function getInitialSocPct(){
-			let v = Number(socInput.value || 0);
-			if (isNaN(v)) v = 0;
-			return Math.max(0, Math.min(100, v));
-		}
+        function getTotalCapacityKwh(){
+            const v = Number(capInput.value || 0);
+            return v > 0 ? v : 50; // fallback demo
+        }
 
-		// ====== Energy live
-		function calcLiveEnergy(elapsedMs){
-		  let e = 0;
-		  if (speedIsMinutes) {
-			if (powerLevelKw > 0 && chargingSpeedVal > 0) {
-			  const elapsedMinutes = elapsedMs / ONE_MIN_MS;
-			  e = powerLevelKw * (elapsedMinutes / chargingSpeedVal);
-			  e = Math.min(e, powerLevelKw); // clamp
-			}
-		  } else {
-			if (chargingSpeedVal > 0) {
-			  const elapsedHours = elapsedMs / ONE_HOUR_MS;
-			  e = chargingSpeedVal * elapsedHours;
-			  const cap = getTotalCapacityKwh();
-			  if (cap > 0) e = Math.min(e, cap);
-			}
-		  }
-		  return Math.max(0, e);
-		}
+        function getInitialSocPct(){
+            let v = Number(socInput.value || 0);
+            if (isNaN(v)) v = 0;
+            return Math.max(0, Math.min(100, v));
+        }
 
-		// Tính % pin đang hiển thị
-		function calcSocPercent(elapsedMs){
-		  const capacity = getTotalCapacityKwh();
-		  if (capacity <= 0) return 0;
+        // ====== TÍNH kWh GIỐNG SERVER (target energy)
+        function calcEnergyServer(elapsedMs){
+          const speed = Number(chargingSpeedVal || 0);
+          const powerLevel = Number(powerLevelKwFromStation || 0);
 
-		  const socInitPct = getInitialSocPct();
-		  const socInitKwh = capacity * (socInitPct / 100);
+          let e = 0;
 
-		  let energyGain = energyLocked;
-		  if (running && startUtc) energyGain = calcLiveEnergy(elapsedMs);
+          if (speedIsMinutes) {
+            if (powerLevel > 0 && speed > 0) {
+              const elapsedMinutes = elapsedMs / ONE_MIN_MS;
+              e = powerLevel * (elapsedMinutes / speed);
+              e = Math.min(e, powerLevel);
+            }
+          } else {
+            if (speed > 0) {
+              const elapsedHours = elapsedMs / ONE_HOUR_MS;
+              e = speed * elapsedHours;
+              if (powerLevel > 0) e = Math.min(e, powerLevel);
+            }
+          }
+          return Math.max(0, e);
+        }
 
-		  let socNow = ((socInitKwh + energyGain) / capacity) * 100;
-		  if (isNaN(socNow)) socNow = 0;
-		  return Math.max(0, Math.min(100, socNow));
-		}
+        // ====== TÍNH tốc độ kWh/giây theo tham số station (để làm mượt)
+        function energyRatePerSec(){
+          const speed = Number(chargingSpeedVal || 0);
+          const powerLevel = Number(powerLevelKwFromStation || 0);
 
-		function render(elapsedMs){
-		  const socPct = calcSocPercent(elapsedMs);
-		  const p = socPct / 100;
+          if (speedIsMinutes) {
+            // công suất trung bình để đầy = powerLevel / (speedMinutes*60) kWh/s
+            if (powerLevel > 0 && speed > 0) return powerLevel / (speed * 60);
+            return 0;
+          } else {
+            // kW mode: kWh/s = (kW / 3600)
+            if (speed > 0) return speed / 3600;
+            return 0;
+          }
+        }
 
-		  arc.style.strokeDasharray  = CIRCUM.toFixed(2);
-		  arc.style.strokeDashoffset = (CIRCUM*(1-p)).toFixed(2);
-		  percentEl.textContent      = Math.round(socPct) + '%';
-		  timeText.textContent       = fmtHms(elapsedMs);
+        // % pin hiển thị = SOC ban đầu + (kWh_sạc(theo server) / tổng kWh xe)*100
+        function calcSocPercent(elapsedMs){
+          const capacity = getTotalCapacityKwh();
+          if (capacity <= 0) return 0;
 
-		  // Energy hiển thị (kWh)
-		  let energyShow = energyLocked;
-		  if (running && startUtc) energyShow = calcLiveEnergy(elapsedMs);
-		  energyEl.textContent = (energyShow ?? 0).toFixed(3);
+          const socInitPct = getInitialSocPct();
+          const socInitKwh = capacity * (socInitPct / 100);
 
-		  // DEBUG
-		  // console.debug('[render]', { elapsedMs, energyShow, socPct, capacity:getTotalCapacityKwh() });
-		}
+          // DÙNG NĂNG LƯỢNG THẬT (target) CHO % để không bị trễ
+          let energyGain = energyLocked;
+          if (running && startUtc) energyGain = calcEnergyServer(elapsedMs);
 
-		function startTick(){
-		  stopTick();
-		  running = true;
-		  const t0 = startUtc ? startUtc.getTime() : Date.now();
-		  tickTimer = setInterval(() => {
-			const now = Date.now();
-			const elapsed = Math.max(0, now - t0);
-			render(elapsed);
-		  }, 20);
-		}
+          let socNowPct = ((socInitKwh + energyGain) / capacity) * 100;
+          if (isNaN(socNowPct)) socNowPct = 0;
+          return Math.max(0, Math.min(100, socNowPct));
+        }
 
-		function stopTick(){
-		  if (tickTimer){ clearInterval(tickTimer); tickTimer = null; }
-		  running = false;
-		}
+        function render(elapsedMs, dtSec){
+          const targetEnergy = running && startUtc ? calcEnergyServer(elapsedMs) : energyLocked;
 
-		// ====== Load session
-		async function loadSession(){
-		  const res = await fetch(`/Charge/Api?handler=Session&sessionId=${sessionId}`);
-		  const js = await res.json();
-		  if (!js.ok || !js.data){ alert(js.msg || 'Không tải được session.'); return; }
-		  const s = js.data;
+          // LÀM MƯỢT: displayEnergy đuổi targetEnergy
+          let delta = targetEnergy - displayEnergy;
+          if (!isFinite(delta)) delta = 0;
 
-		  startUtc = s.startTime ? parseServerTime(s.startTime) : null;
-		  endUtc   = s.endTime   ? parseServerTime(s.endTime)   : null;
-		  energyLocked = Number(s.energyConsumedKwh || 0);
+          const rate = energyRatePerSec();                // kWh/s theo tham số trạm
+          const naturalStep = rate * dtSec;               // bước tự nhiên theo vật lý
+          let step = Math.max(0.001, Math.min(0.002, naturalStep)); // kẹp 0.001..0.002 kWh/tick
+          step = Math.min(Math.abs(delta), step);         // không vượt quá phần còn lại
+          displayEnergy += Math.sign(delta) * step;
 
-		  startAtEl.textContent = startUtc ? toLocalVN(startUtc) : '-';
-		  endAtEl.textContent   = endUtc   ? toLocalVN(endUtc)   : '-';
-		  energyEl.textContent  = energyLocked.toFixed(3);
+          // cập nhật vòng tròn (% dùng target để không lag)
+          const socPct = calcSocPercent(elapsedMs);
+          const p = socPct / 100;
 
-		  if ((s.status || '').toLowerCase() === 'ongoing' && startUtc && !endUtc){
-			btnStart.disabled = true;
-			btnStop.disabled  = false;
-			startTick();
-		  } else {
-			btnStart.disabled = false;
-			btnStop.disabled  = true;
-			stopTick();
-			if (startUtc && endUtc){
-			  const elapsed = Math.max(0, endUtc.getTime() - startUtc.getTime());
-			  render(elapsed);
-			} else {
-			  render(0);
-			}
-		  }
-		}
+          arc.style.strokeDasharray  = CIRCUM.toFixed(2);
+          arc.style.strokeDashoffset = (CIRCUM*(1-p)).toFixed(2);
+          percentEl.textContent      = Math.round(socPct) + '%';
+          timeText.textContent       = fmtHms(elapsedMs);
 
-		// ====== Actions
-		btnStart.addEventListener('click', async () => {
-		  const res = await fetch('/Charge/Api?handler=Start', {
-			method:'POST', headers:{'Content-Type':'application/json'},
-			body: JSON.stringify({ sessionId })
-		  });
-		  const js = await res.json();
-		  if (!js.ok){ alert(js.msg || 'Start thất bại'); return; }
-		  await loadSession();
-		});
+          // ENERGY hiển thị mượt (3 số lẻ)
+          energyEl.textContent = (displayEnergy ?? 0).toFixed(3);
 
-		btnStop.addEventListener('click', async () => {
-		  const res = await fetch('/Charge/Api?handler=Stop', {
-			method:'POST', headers:{'Content-Type':'application/json'},
-			body: JSON.stringify({ sessionId })
-		  });
-		  const js = await res.json();
-		  if (!js.ok){ alert(js.msg || 'Stop thất bại'); return; }
-		  stopTick();
-		  await loadSession();
-		});
+          // Auto-stop khi đạt 100% SOC
+          if (running && socPct >= 100) {
+            stopTick();
+            btnStart.disabled = true;
+            btnStop.disabled  = false;
+          }
+        }
 
-		btnReset.addEventListener('click', () => {
-		  stopTick();
-		  startUtc = null; endUtc = null; energyLocked = 0;
-		  startAtEl.textContent = '-';
-		  endAtEl.textContent   = '-';
-		  energyEl.textContent  = '0.000';
-		  btnStart.disabled = false;
-		  btnStop.disabled  = true;
-		  render(0);
-		});
+        function startTick(){
+          stopTick();
+          running = true;
+          lastTickTs = performance.now();
+          const t0 = startUtc ? startUtc.getTime() : Date.now();
 
-		// Khi đổi SOC (%) hoặc Capacity (kWh) → re-render ngay
-		socInput.addEventListener('input', () => {
-			if (running && startUtc) return; // tick loop sẽ tự render
-			render( startUtc && endUtc ? Math.max(0, endUtc.getTime() - startUtc.getTime()) : 0 );
-		});
-		capInput.addEventListener('input', () => {
-			if (running && startUtc) return;
-			render( startUtc && endUtc ? Math.max(0, endUtc.getTime() - startUtc.getTime()) : 0 );
-		});
+          tickTimer = setInterval(() => {
+            const now = performance.now();
+            const dtSec = Math.max(0, (now - lastTickTs) / 1000);
+            lastTickTs = now;
 
-		// init
-		loadSession();
-	</script>
+            const elapsed = Math.max(0, Date.now() - t0);
+            render(elapsed, dtSec);
+          }, 50); // tick nhanh hơn để mượt (20 fps)
+        }
+
+        function stopTick(){
+          if (tickTimer){ clearInterval(tickTimer); tickTimer = null; }
+          running = false;
+          lastTickTs = null;
+        }
+
+        // ====== Load session
+        async function loadSession(){
+          const res = await fetch(`/Charge/Api?handler=Session&sessionId=${sessionId}`);
+          const js = await res.json();
+          if (!js.ok || !js.data){ alert(js.msg || 'Không tải được session.'); return; }
+          const s = js.data;
+
+          startUtc = s.startTime ? parseServerTime(s.startTime) : null;
+          endUtc   = s.endTime   ? parseServerTime(s.endTime)   : null;
+          energyLocked = Number(s.energyConsumedKwh || 0);
+
+          // đồng bộ hiển thị mượt với trạng thái server
+          displayEnergy = energyLocked;
+
+          startAtEl.textContent = startUtc ? toLocalVN(startUtc) : '-';
+          endAtEl.textContent   = endUtc   ? toLocalVN(endUtc)   : '-';
+          energyEl.textContent  = displayEnergy.toFixed(3);
+
+          if ((s.status || '').toLowerCase() === 'ongoing' && startUtc && !endUtc){
+            btnStart.disabled = true;
+            btnStop.disabled  = false;
+
+            // khi đang chạy, set displayEnergy bằng target hiện tại để tránh "nhảy lùi"
+            const elapsed = Math.max(0, Date.now() - startUtc.getTime());
+            displayEnergy = calcEnergyServer(elapsed);
+
+            startTick();
+          } else {
+            btnStart.disabled = false;
+            btnStop.disabled  = true;
+            stopTick();
+            if (startUtc && endUtc){
+              const elapsed = Math.max(0, endUtc.getTime() - startUtc.getTime());
+              render(elapsed, 0.05);
+            } else {
+              render(0, 0.05);
+            }
+          }
+        }
+
+        // ====== Actions
+        btnStart.addEventListener('click', async () => {
+          const res = await fetch('/Charge/Api?handler=Start', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ sessionId })
+          });
+          const js = await res.json();
+          if (!js.ok){ alert(js.msg || 'Start thất bại'); return; }
+          await loadSession();
+        });
+
+        btnStop.addEventListener('click', async () => {
+          const res = await fetch('/Charge/Api?handler=Stop', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ sessionId })
+          });
+          const js = await res.json();
+          if (!js.ok){ alert(js.msg || 'Stop thất bại'); return; }
+          stopTick();
+          await loadSession();
+        });
+
+        btnReset.addEventListener('click', () => {
+          stopTick();
+          startUtc = null; endUtc = null; energyLocked = 0;
+          displayEnergy = 0;
+          startAtEl.textContent = '-';
+          endAtEl.textContent   = '-';
+          energyEl.textContent  = '0.000';
+          btnStart.disabled = false;
+          btnStop.disabled  = true;
+          render(0, 0.05);
+        });
+
+        // Khi đổi SOC (%) hoặc Capacity (kWh) → re-render ngay (không ảnh hưởng làm mượt energy)
+        socInput.addEventListener('input', () => {
+            if (running && startUtc) return;
+            const elapsed = (startUtc && endUtc) ? Math.max(0, endUtc.getTime() - startUtc.getTime()) : 0;
+            render(elapsed, 0.05);
+        });
+        capInput.addEventListener('input', () => {
+            if (running && startUtc) return;
+            const elapsed = (startUtc && endUtc) ? Math.max(0, endUtc.getTime() - startUtc.getTime()) : 0;
+            render(elapsed, 0.05);
+        });
+
+        // init
+        loadSession();
+    </script>
 }

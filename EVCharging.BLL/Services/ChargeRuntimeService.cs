@@ -26,7 +26,6 @@ namespace EVCharging.BLL.Services
             var p = s.Point;
             var st = p?.Station;
 
-            // ÉP Kind = Utc để JSON có 'Z'
             DateTime? startUtc = s.StartTime.HasValue ? EnsureUtc(s.StartTime.Value) : (DateTime?)null;
             DateTime? endUtc = s.EndTime.HasValue ? EnsureUtc(s.EndTime.Value) : (DateTime?)null;
 
@@ -38,10 +37,10 @@ namespace EVCharging.BLL.Services
 
                 PortType = p?.PortType ?? "",
                 PowerLevelKW = p?.PowerLevelKw,        // kWh mục tiêu
-                ChargingSpeedKW = p?.ChargingSpeedKw,     // AC: phút để đầy; ngược lại: kW
+                ChargingSpeedKW = p?.ChargingSpeedKw,  // AC: phút để đầy; ngược lại: kW
 
-                StartTime = startUtc,   // Kind = Utc
-                EndTime = endUtc,     // Kind = Utc
+                StartTime = startUtc,
+                EndTime = endUtc,
                 Status = s.Status,
 
                 StationName = st?.Name,
@@ -81,20 +80,17 @@ namespace EVCharging.BLL.Services
             if (s.StartTime == null) return (false, "Chưa có thời điểm bắt đầu.", 0m);
             if (s.EndTime != null) return (false, "Session đã dừng trước đó.", 0m);
 
-            // GIỮ UTC CHUẨN, không trừ nhầm 7h
             var start = EnsureUtc(s.StartTime.Value);
             var end = EnsureUtc(endUtc);
             if (end <= start) return (false, "Thời điểm kết thúc phải > bắt đầu.", 0m);
 
             var p = s.Point ?? await _pointRepo.GetByIdAsync(s.PointId);
 
-            // Tham số điểm sạc
             var portType = p?.PortType?.Trim() ?? "";
             var powerLevel = (decimal)(p?.PowerLevelKw ?? 0); // kWh mục tiêu
             var speedRaw = (decimal)(p?.ChargingSpeedKw ?? 0); // AC: phút để đầy; ngược lại: kW
 
-            // Heuristic KHỚP với client:
-            // AC && powerLevel>0 && 5..600 phút => minutes-to-full; ngược lại: kW
+            // KHỚP client: AC && powerLevel>0 && 5..600 phút => minutes-to-full; ngược lại: kW
             var isMinutesToFull =
                 portType.Equals("AC", StringComparison.OrdinalIgnoreCase)
                 && powerLevel > 0
@@ -105,22 +101,20 @@ namespace EVCharging.BLL.Services
 
             if (isMinutesToFull)
             {
-                // A) Minutes-to-full: Energy = PowerLevel(kWh) * (elapsedMinutes / speedMinutes)
                 var elapsedMinutes = (decimal)elapsed.TotalMinutes;
                 if (elapsedMinutes > 0 && speedRaw > 0)
                 {
                     var raw = powerLevel * (elapsedMinutes / speedRaw);
-                    energyKwh = Math.Min(raw, powerLevel); // clamp
+                    energyKwh = Math.Min(raw, powerLevel);
                 }
             }
             else
             {
-                // B) kW * giờ: Energy = ChargingPower(kW) * elapsedHours
                 var elapsedHours = (decimal)elapsed.TotalHours;
                 if (elapsedHours > 0 && speedRaw > 0)
                 {
                     var raw = speedRaw * elapsedHours;
-                    energyKwh = (powerLevel > 0) ? Math.Min(raw, powerLevel) : raw; // clamp nếu có mục tiêu
+                    energyKwh = (powerLevel > 0) ? Math.Min(raw, powerLevel) : raw;
                 }
             }
 
@@ -135,12 +129,6 @@ namespace EVCharging.BLL.Services
             return (true, "Đã dừng sạc và tính năng lượng.", energyKwh);
         }
 
-        /// <summary>
-        /// Chuẩn hóa về UTC:
-        /// - Utc: giữ nguyên
-        /// - Local: chuyển ToUniversalTime()
-        /// - Unspecified: coi là UTC (KHÔNG xem như Local để tránh trừ 7h)
-        /// </summary>
         private static DateTime EnsureUtc(DateTime dt) => dt.Kind switch
         {
             DateTimeKind.Utc => dt,

@@ -14,7 +14,6 @@ namespace EVCharging.BLL.Services
             _bookingRepo = bookingRepo;
         }
 
-        // List tất cả booking có session gắn với stationId (qua Point -> Station)
         public async Task<List<BookingListItemDTO>> GetByStationAsync(int stationId)
         {
             var list = await _bookingRepo.GetByStationAsync(stationId);
@@ -44,13 +43,11 @@ namespace EVCharging.BLL.Services
             return result;
         }
 
-        // Detail: chỉ trả nếu booking thuộc stationId
         public async Task<BookingDetailDTO?> GetDetailAsync(int? stationId, int bookingId)
         {
             var b = await _bookingRepo.GetByIdWithGraphAsync(bookingId);
             if (b == null) return null;
 
-            // hợp lệ khi có ít nhất 1 session thuộc stationId
             var anyMatch = b.ChargingSessions.Any(s => s.Point?.StationId == stationId);
             if (!anyMatch) return null;
 

@@ -5,13 +5,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EVCharging.Pages.Charge
 {
-    public class IndexModel(IChargeRuntimeService svc, ITransactionService transactionService, IVNPayService vNPayService, IMomoService momoService, IChargingSessionService chargingSessionService, IStaffBookingQueryService bookingService) : PageModel
+    public class IndexModel(IChargeRuntimeService svc,
+                            ITransactionService transactionService,
+                            IVNPayService vNPayService,
+                            IMomoService momoService,
+                            IChargingSessionService chargingSessionService,
+                            IStaffBookingQueryService bookingService) : PageModel
     {
         private readonly IChargeRuntimeService _svc = svc;
         private readonly IChargingSessionService _chargingSessionService = chargingSessionService;
         private readonly ITransactionService _transactionService = transactionService;
         private readonly IStaffBookingQueryService _bookingService = bookingService;
-
 
         private readonly IVNPayService _vNPayService = vNPayService;
         private readonly IMomoService _momoService = momoService;
@@ -33,10 +37,7 @@ namespace EVCharging.Pages.Charge
         {
             if (SessionId <= 0) return RedirectToPage("/Staff/Booking/Index");
 
-            if (Transaction == null)
-            {
-                Transaction = new TransactionDTO();
-            }
+            Transaction ??= new TransactionDTO();
 
             var (ok, msg, dto) = await _svc.GetSessionAsync(SessionId);
             if (!ok || dto == null)
@@ -54,11 +55,10 @@ namespace EVCharging.Pages.Charge
             return Page();
         }
 
-
         public async Task<IActionResult> OnPostAsync()
         {
             var session = await _chargingSessionService.GetByIdAsync(Transaction.SessionId);
-            if (session == null) return Page(); ;
+            if (session == null) return Page();
 
             Transaction.BookingId = session.BookingId;
             var transaction = await _transactionService.CreateAsync(Transaction);
@@ -89,12 +89,8 @@ namespace EVCharging.Pages.Charge
                     break;
             }
 
-            return string.IsNullOrEmpty(url.Trim())
-                ? RedirectToPage("/Staff/Payment/CashRedirect", "OnGet", new
-                {
-                    orderId = transaction.Id,
-                    resultCode = 1
-                })
+            return string.IsNullOrWhiteSpace(url)
+                ? RedirectToPage("/Staff/Payment/CashRedirect", "OnGet", new { orderId = transaction.Id, resultCode = 1 })
                 : Redirect(url);
         }
     }

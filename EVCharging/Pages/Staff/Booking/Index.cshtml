@@ -14,6 +14,34 @@
     <div class="alert alert-danger">@err</div>
 }
 
+<!-- Style cho badge trạng thái -->
+<style>
+    /* Badge trạng thái: pill + đậm + dễ nhìn */
+    .badge-state {
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: .2px;
+        padding: 0.5rem 0.75rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    /* Hiệu ứng ánh sáng nhẹ theo màu */
+    .bg-success.badge-state {
+        box-shadow: 0 0 18px rgba(25,135,84,.25);
+    }
+
+    .bg-primary.badge-state {
+        box-shadow: 0 0 18px rgba(13,110,253,.25);
+    }
+
+    .bg-danger.badge-state {
+        box-shadow: 0 0 18px rgba(220,53,69,.25);
+    }
+
+    .bg-secondary.badge-state {
+        box-shadow: 0 0 18px rgba(108,117,125,.25);
+    }
+</style>
+
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white border-0 py-3">
         <h5 class="mb-0">
@@ -21,7 +49,7 @@
             Bộ lọc tìm kiếm
         </h5>
     </div>
-    <div classs="card-body">
+    <div class="card-body">
         <form method="get" class="p-3">
             <div class="row g-3">
                 <div class="col-md-3">
@@ -57,7 +85,6 @@
         </form>
     </div>
 </div>
-
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -109,25 +136,25 @@
                                 <td>
                                     @if (x.Status.Equals("success", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        <span class="badge bg-success-subtle text-success-emphasis">
+                                        <span class="badge badge-state bg-success text-white">
                                             <i class="fas fa-circle-check me-1"></i> Thành công
                                         </span>
                                     }
                                     else if (x.Status.Equals("ongoing", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        <span class="badge bg-primary-subtle text-primary-emphasis">
+                                        <span class="badge badge-state bg-primary text-white">
                                             <i class="fas fa-bolt me-1"></i> Đang diễn ra
                                         </span>
                                     }
                                     else if (x.Status.Equals("cancelled", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        <span class="badge bg-danger-subtle text-danger-emphasis">
+                                        <span class="badge badge-state bg-danger text-white">
                                             <i class="fas fa-circle-xmark me-1"></i> Đã hủy
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                                        <span class="badge badge-state bg-secondary text-white">
                                             @x.Status
                                         </span>
                                     }
@@ -150,7 +177,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Gắn Select2 vào <select> có class 'select2-basic'
             $('.select2-basic').select2({
                 theme: "bootstrap-5",
