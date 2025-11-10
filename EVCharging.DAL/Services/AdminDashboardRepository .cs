@@ -1,10 +1,5 @@
 ﻿using EVCharging.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVCharging.DAL.Services
 {
@@ -107,9 +102,8 @@ namespace EVCharging.DAL.Services
         {
             // Chỉ lấy transaction thành công và user có HomeStation
             var data = await _context.Transactions
-                .Where(t => t.Status == "success"
-                            && t.Booking.User.HomeStation != null)
-                .GroupBy(t => t.Booking.User.HomeStation!.Name)
+                .Where(t => t.Status == "success")
+                .GroupBy(t => t.Booking.ChargingSessions.First().Point.Station!.Name)
                 .Select(g => new
                 {
                     StationName = g.Key,

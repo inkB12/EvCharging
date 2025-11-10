@@ -199,7 +199,7 @@
 							<div class="input-group">
 								<input id="capInput" type="number" class="form-control"
 									   min="1" step="1" value="@(Model.PowerLevelKW ?? 50)"
-									   @(Model.PowerLevelKW.HasValue && Model.PowerLevelKW.Value > 0 ? "readonly" : "") />
+									   @(Model.PowerLevelKW.HasValue && Model.PowerLevelKW.Value > 0 ? "" : "") />
 								<span class="input-group-text">kWh</span>
 							</div>
 							<div class="mini mt-1">
